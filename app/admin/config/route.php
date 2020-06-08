@@ -13,7 +13,7 @@ return [
     // 是否开启路由延迟解析
     'url_lazy_route'        => false,
     // 是否强制使用路由
-    'url_route_must'        => false,
+    'url_route_must'        => true,
     // 合并路由规则
     'route_rule_merge'      => false,
     // 路由是否完全匹配
@@ -33,7 +33,7 @@ return [
     // 全局请求缓存排除规则
     'request_cache_except'  => [],
     // 默认控制器名
-    'default_controller'    => 'BaseController',
+    'default_controller'    => 'Index',
     // 默认操作名
     'default_action'        => 'index',
     // 操作方法后缀
