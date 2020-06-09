@@ -10,11 +10,29 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-//Route::get('think', function () {
-//    return 'hello,ThinkPHP6!';
-//});
 
+/****----------测试--------------------***/
 Route::get('testAdmin', 'admin/index/hello');
-Route::get('art', function () {
-    return 'hello,ThinkPHP666666!';
-});
+/****----------登录--------------------***/
+Route::post('login', 'admin/user/login');
+/****----------管理用户列表--------------------***/
+Route::get('sysUserList', 'admin/user/getSysUserList');
+/****----------管理用户详情--------------------***/
+Route::get('sysUserDetails', 'admin/user/sysUserDetails');
+/****----------管理用户修改-------------------***/
+Route::post('sysUserUpdate', 'admin/user/sysUserUpdate');
+/****----------管理用户修改-------------------***/
+Route::post('sysUserDelete', 'admin/user/sysUserDelete');
+/****----------管理用户增加-------------------***/
+Route::post('sysUserAdd', 'admin/user/sysUserAdd');
+
+/****----------班级列表--------------------***/
+Route::get('sysClassList', 'admin/user/getSysClassList');
+/****----------班级详情--------------------***/
+Route::get('sysClassDetails', 'admin/user/sysClassDetails');
+/****----------班级修改-------------------***/
+Route::post('sysClassUpdate', 'admin/user/sysClassUpdate');
+/****----------班级修改-------------------***/
+Route::post('sysClassDelete', 'admin/user/sysClassDelete');
+/****----------班级增加-------------------***/
+Route::post('sysClassAdd', 'admin/user/sysClassAdd');

@@ -8,8 +8,8 @@ use think\facade\Env;
 
 return [
     // 默认缓存驱动
-    'default' => Env::get('cache.driver', 'redis'),
-
+  //  'default' => Env::get('cache.driver', 'redis'),
+    'default' => 'redis',
     // 缓存连接方式配置
     'stores'  => [
         'file'  => [

@@ -13,8 +13,12 @@ use think\facade\Route;
 //Route::get('think', function () {
 //    return 'hello,ThinkPHP6!';
 //});
+/******** 登录 *******/
+Route::post('login', 'index/index/login');
 
-//Route::get('testAdmin', 'admin/index/hello');
-Route::get('art', function () {
-    return 'hello,ThinkPHP666666!';
-});
+/******** 班主任课程情况&缺省 *******/
+Route::get('course', 'index/teacher/course');
+
+/******** 班主任查看某个学生课程记录详情*******/
+Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
+
