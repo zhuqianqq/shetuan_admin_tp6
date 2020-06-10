@@ -14,7 +14,7 @@ use think\facade\Route;
 //    return 'hello,ThinkPHP6!';
 //});
 /******** 登录 *******/
-Route::post('login', 'index/index/login');
+Route::any('login', 'index/user/loginByMinWechat');
 
 /******** 班主任课程情况&缺省 *******/
 Route::get('course', 'index/teacher/course');

@@ -52,7 +52,7 @@ class ExceptionHandle extends Handle
     public function render($request, Throwable $e): Response
     {
         // 添加自定义异常处理机制
-        if ($e instanceof \app\MyException) {
+        if ($e instanceof \app\index\MyException) {
             return json_error($e->getCode(), $e->getMessage());
         }
         if ($e instanceof \think\exception\ValidateException) {
