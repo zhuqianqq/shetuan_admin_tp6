@@ -73,7 +73,7 @@ class CheckAdminUser
         if (empty($user)) {
             throw new \app\admin\MyException(11104);
         }
-        $request->dani_user = $user;
+        $request->st_user = $user;
         return $next($request);
     }
 }

@@ -50,7 +50,7 @@ abstract class BaseController
         $this->request = $this->app->request;
 
         // 控制器初始化
-        $this->initialize();
+        //$this->initialize();
     }
 
     // 初始化
@@ -109,7 +109,7 @@ abstract class BaseController
             if (empty($user)) {
                 throw new \app\admin\MyException(11104);
             }
-            $this->request->dani_user = $user;
+            $this->request->st_user = $user;
         }
 
     }

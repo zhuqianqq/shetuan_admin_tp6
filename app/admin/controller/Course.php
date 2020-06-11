@@ -29,6 +29,15 @@ class Course extends BaseController
     }
 
     /**
+     * 课程
+     */
+    public function courseInfo()
+    {
+        $result = CourseService::courseInfo();
+        return json_ok($result);
+    }
+
+    /**
      * 增加或修改课程
      * @Validate(VC::class,scene="save",batch="true")
      */
@@ -68,8 +77,8 @@ class Course extends BaseController
     public function courseOnOrOff()
     {
         $courseId = input('post.courseId', '', 'int');
-        $status = input('post.status', '', 'int');
-        if (!$courseId || !$status) return json_error(10002);
+        $status = input('post.status', '-1', 'int');
+        if (!$courseId || !in_array($status, [0, 1])) return json_error(10002);
         $result = CourseService::courseOnOrOff($courseId, $status);
 
         return json_ok($result);

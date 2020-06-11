@@ -44,6 +44,21 @@ class CourseService
         return $result;
     }
 
+
+    /**
+     * 获取所有课程信息
+     * @return array
+     */
+    public static function courseInfo()
+    {
+        $res = Course::where('status', 1)->field('course_id courseId,course_name courseName,weeks,start_time,end_time,course_type courseType,class_place classPlace,grade')->select();
+        if (empty($res)) {
+            return [];
+        }
+
+        return $res->toArray();
+    }
+
     /**
      * 更新或者创建课程
      * @param array $data
