@@ -18,17 +18,36 @@ class CourseService
     /**
      * 课程列表
      */
-    public static function getInfo()
+    public static function courseList($param)
     {
-        $result = EateryService::getlist();
+        $where = '1=1 ';
+        $bind = [];
+        if ($param['status'] != -1) {
+            $where .= 'AND status=:status';
+            $bind = ['status' => $param['status']];
+        }
+
+        if (!empty($param['course_name'])) {
+            $where .= ' AND course_name like "%'. $param['course_name']. '%"';
+        }
+
+        if (!empty($param['weeks'])) {
+            $where .= ' AND weeks FIND_IN_SET('.$param['weeks'].',weeks)';
+        }
+
+        if (!empty($param['grade'])) {
+            $where .= ' AND grade FIND_IN_SET('.$param['grade'].',grade)';
+        }
+
+        $result = Course::where($where, $bind)->select();
+
         return $result;
     }
 
     /**
-     * 更新或者创建菜品
+     * 更新或者创建课程
      * @param array $data
      * @return array 对象数组
-     * @throws \app\MyException
      */
     public static function addOrUpdate($data)
     {
@@ -62,10 +81,8 @@ class CourseService
     }
 
     /**
-     * 删除菜品
+     * 删除课程
      * @param array $data
-     * @return array 对象数组
-     * @throws \app\MyException
      */
     public static function deleteFood($foodId){
         $oneFood = F::find($foodId);
@@ -76,7 +93,27 @@ class CourseService
             throw new MyException(14004);
         }
 
-        return true;
+        return (object)[];
+    }
+
+    /**
+     * 下架课程
+     * @param array $data
+     */
+    public static function courseDrop($coursId){
+        $oneCourse = CourseService::find($coursId);
+        if (!$oneCourse) {
+            throw new MyException(10004);
+        }
+
+        $oneCourse->status = 0;
+        try {
+            $oneCourse->save();
+        } catch (\Exception $e) {
+            throw new MyException(10001, $e->getMessage());
+        }
+
+        return (object)[];
     }
 
 }
