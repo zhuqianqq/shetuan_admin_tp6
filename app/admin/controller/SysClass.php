@@ -43,9 +43,9 @@ class SysClass extends BaseController
      */
     public function classDelete()
     {
-        $teacherId = input('post.teacherId', '', 'int');
-        if (!$teacherId) return json_error(10002);
-        $result = SysClassService::stTeacherDelete($teacherId);
+        $classId = input('post.classId', '', 'string');
+        if (!$classId) return json_error(10002);
+        $result = SysClassService::sysClassDelete($classId);
 
         return json_ok($result);
     }
