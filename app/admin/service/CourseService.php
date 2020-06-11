@@ -32,11 +32,11 @@ class CourseService
         }
 
         if (!empty($param['weeks'])) {
-            $where .= ' AND weeks FIND_IN_SET('.$param['weeks'].',weeks)';
+            $where .= ' AND  FIND_IN_SET('.$param['weeks'].',weeks)';
         }
 
         if (!empty($param['grade'])) {
-            $where .= ' AND grade FIND_IN_SET('.$param['grade'].',grade)';
+            $where .= ' AND FIND_IN_SET('.$param['grade'].',grade)';
         }
 
         $result = Course::where($where, $bind)->paginate($param['page_size'])->toArray();;
@@ -100,16 +100,16 @@ class CourseService
     }
 
     /**
-     * 下架课程
+     * 上下架课程
      * @param array $data
      */
-    public static function courseDrop($coursId){
+    public static function courseOnOrOff($coursId, $status){
         $oneCourse = Course::find($coursId);
         if (empty($oneCourse)) {
             throw new MyException(10004);
         }
 
-        $oneCourse->status = 0;
+        $oneCourse->status = $status;
         try {
             $oneCourse->save();
         } catch (\Exception $e) {

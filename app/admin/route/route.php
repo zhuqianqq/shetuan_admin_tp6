@@ -42,8 +42,8 @@ Route::post('sysClassAdd', 'admin/user/sysClassAdd');
 Route::post('courseAddOrUpdate', 'admin/course/courseAddOrUpdate')->validate(\app\admin\validate\Course::class,'save');
 /****----------课程列表-------------------***/
 Route::get('courseList', 'admin/course/courseList');
-/****----------课程下架-------------------***/
-Route::post('courseDrop', 'admin/course/courseDrop');
+/****----------课程上下架-------------------***/
+Route::post('courseOnOrOff', 'admin/course/courseOnOrOff');
 /****----------课程删除-------------------***/
 Route::post('courseDelete', 'admin/course/courseDelete');
 

@@ -65,11 +65,12 @@ class Course extends BaseController
     /**
      * 课程下架
      */
-    public function courseDrop()
+    public function courseOnOrOff()
     {
         $courseId = input('post.courseId', '', 'int');
-        if (!$courseId) return json_error(10002);
-        $result = CourseService::courseDrop($courseId);
+        $status = input('post.status', '', 'int');
+        if (!$courseId || !$status) return json_error(10002);
+        $result = CourseService::courseOnOrOff($courseId, $status);
 
         return json_ok($result);
     }
