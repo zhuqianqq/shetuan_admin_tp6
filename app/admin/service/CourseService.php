@@ -41,7 +41,7 @@ class CourseService
                 throw new MyException(10004);
             }
         }
-        
+
         $coursM->school_id = 1;
         $coursM->course_name = $data['course_name'];
         $coursM->status = $data['status'];

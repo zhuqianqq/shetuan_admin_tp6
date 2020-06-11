@@ -14,6 +14,7 @@ use app\traits\ModelTrait;
  */
 class Course extends BaseModel
 {
+    protected $pk = 'course_id';
     protected $table = "st_shetuan";
 }
 
