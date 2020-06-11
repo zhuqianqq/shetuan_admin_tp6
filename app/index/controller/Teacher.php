@@ -63,7 +63,15 @@ class Teacher extends BaseController
             return json_error(11104);
         }
 
-        return json_ok(TeacherService::allClasses($userInfo,$grade),0);
+        $classes = TeacherService::allClasses($userInfo,$grade);
+
+        $ret_data = [
+            'teacher_name' => $userInfo['teacher_name'],
+            'user_role' => 1,
+            'classes' => $classes,
+        ];
+
+        return json_ok($ret_data,0);
     }
 
 
@@ -76,7 +84,7 @@ class Teacher extends BaseController
     {
         $class_id = $request->param('class_id',''); //年级
         if(empty($class_id)){
-            return json_error(100,'班级id');
+            return json_error(100,'请传入班级id');
         }
 
         $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();

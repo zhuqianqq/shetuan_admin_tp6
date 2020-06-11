@@ -37,7 +37,8 @@ Route::get('course', 'index/teacher/course');
 //认领班级列表
 Route::any('allClasses', 'index/teacher/allClasses');
 
-
+//认领班级操作
+Route::any('claimClass', 'index/teacher/claimClass');
 
 
 /******** 班主任查看某个学生课程记录详情*******/
