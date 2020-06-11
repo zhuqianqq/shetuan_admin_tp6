@@ -15,6 +15,6 @@ return [
     //\app\middleware\AllowCors::class,
 
     //access_key检查
-    \app\index\middleware\CheckUser::class,
+    //\app\index\middleware\CheckUser::class,
 
 ];
