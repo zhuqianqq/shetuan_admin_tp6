@@ -8,12 +8,13 @@ use think\model\concern\SoftDelete;
 use app\traits\ModelTrait;
 
 /**
- * 学生签到表
+ * 学生点名接口
  * Class RollCall
  * @package app\model
  */
 class RollCall extends BaseModel
 {
-    public static $_table = "st_roll_call";  
+    protected $table = "st_roll_call";
+    
 }
 
