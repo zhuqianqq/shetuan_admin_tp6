@@ -10,6 +10,7 @@ use think\facade\Config;
 use think\facade\Cache;
 use app\index\model\BaseModel;
 use app\common\model\Course;
+use app\common\model\TuanTeacher;
 
 /**
  * 社团老师
@@ -26,15 +27,15 @@ class StTeacherService
      * @return json
      */
     public static function index($user)
-    {
-        $todayCourses = [];
+    {  
         $courseInfo = Course::where('course_id','in',$user['course_id'])
                       ->whereTime('end_time','>','now')
                       ->select()->order('start_time','asc')->toArray();
         if(!$courseInfo){
-            return $todayCourses;
+            return [];
         }
-    
+
+        $todayCourses = [];
         $weekday = date("w", time());
         foreach ($courseInfo as $k => $v) {
             if(strpos($v['weeks'], $weekday) != false){
@@ -43,6 +44,28 @@ class StTeacherService
         }
         return $todayCourses;
     }
+
+
+    /**
+     * 社团老师排课计划
+     * @param string $user 社团老师信息
+     * @return json
+     */
+    public static function schedule($user)
+    {
+        $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->select()->order('course_id','desc')->toArray();
+        if(!$courseInfo){
+            return [];
+        }
+
+        foreach ($courseInfo as $k => $v) {
+            $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->columns('teacher_name');
+            $courseInfo[$k]['teacher_name'] = $teacher_name;
+        }
+    }
+
+    
 
     /**
      * 班主任查看课程情况

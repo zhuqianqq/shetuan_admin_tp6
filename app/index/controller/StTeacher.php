@@ -33,6 +33,29 @@ class StTeacher extends BaseController
         return json_ok($ret_data);
     }
 
+
+    /**
+     * 社团老师排课计划
+     * @param  Request $request
+     * @return json
+     */
+    public function schedule(Request $request)
+    {
+        
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
+        }
+        $courses = StTeacherService::schedule($userInfo);
+        $ret_data = [
+            'teacher_name' => $userInfo['teacher_name'],
+            'head_image' => $userInfo['head_image'],
+            'courses' => $courses,
+            'today' => date('Y-m-d',time())
+        ];
+        return json_ok($ret_data);
+    }
+
     /**
      * 班主任查看某个学生课程记录详情
      * @param  Request $request
