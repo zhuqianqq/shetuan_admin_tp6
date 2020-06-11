@@ -76,23 +76,27 @@ class StTeacher extends BaseController
      */
     public function claimCourses(Request $request)
     {
-        $studentId = $request->param('course_id');
+        $course_id = $request->param('course_id');
 
     }
     /**
-     * 班主任查看某个学生课程记录详情
+     * 课程情况列表
      * @param  Request $request
      * @return json
      */
-    public function courseByStudentDetails(Request $request)
+    public function courseInfoList(Request $request)
     {
-        $studentId = $request->param('studentId');
-
-        if(empty($studentId)){
-            return json_error(100,'请传入学生ID');
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
         }
+        $courses = StTeacherService::courseInfoList($userInfo);
 
-        return TeacherService::courseByStudentDetails($studentId);
+        $ret_data = [ 
+            'courses' => $courses,
+            'today' => date('Y-m-d',time())
+        ];
+        return json_ok($ret_data,0); 
     }
 
 }
