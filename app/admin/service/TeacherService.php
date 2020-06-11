@@ -22,7 +22,7 @@ class TeacherService
     /**
      * 课程列表
      */
-    public static function eacherList($param)
+    public static function teacherList($param)
     {
         $where = '1=1 ';
         $bind = [];

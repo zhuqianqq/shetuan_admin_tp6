@@ -33,9 +33,8 @@ Route::get('sysClassDetails', 'admin/SysClass/sysClassDetails');
 /****----------班级修改-------------------***/
 Route::post('sysClassUpdate', 'admin/SysClass/sysClassUpdate');
 /****----------班级修改-------------------***/
-Route::post('sysClassDelete', 'admin/SysClass/sysClassDelete');
-/****----------班级增加-------------------***/
-Route::post('sysClassAdd', 'admin/SysClass/sysClassAdd');
+Route::post('classAddOrUpdate', 'admin/SysClass/classAddOrUpdate');
+
 
 
 /****----------课程增加或修改-------------------***/
@@ -59,7 +58,7 @@ Route::post('stTecherDelete', 'admin/stTeacher/stTecherDelete');
 
 
 /****----------班主任增加或修改-------------------***/
-Route::post('stTeacherAddOrUpdate', 'admin/stTeacher/stTeacherAddOrUpdate')->validate(\app\admin\validate\stTeacher::class,'save');
+Route::post('classAddOrUpdate', 'admin/stTeacher/classAddOrUpdate');
 /****----------班主任老师列表-------------------***/
 Route::get('stTeacherList', 'admin/stTeacher/stTeacherList');
 /****----------班主任老师删除-------------------***/

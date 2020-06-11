@@ -14,7 +14,8 @@ use app\traits\ModelTrait;
  */
 class ClassModel extends BaseModel
 {
- 
+    protected $pk = 'class_id';
+    public static $_table = "st_class";
     protected $table = "st_class";
 
 }
