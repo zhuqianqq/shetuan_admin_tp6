@@ -14,6 +14,6 @@ use app\traits\ModelTrait;
  */
 class RollCall extends BaseModel
 {
-    public static $_table = "st_roll_call"; 
+    public static $_table = "st_roll_call";  
 }
 
