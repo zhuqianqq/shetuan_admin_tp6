@@ -30,7 +30,7 @@ class TeacherService
         $classes = ClassModel::where(['school_id'=>$user['school_id'],'grade'=>$grade,'enable'=>1])
                   ->field('class_id,class_name')
                   ->select()->toArray();
-        
+
         foreach ($classes as $k => $v) {
             # code...
             if(strpos($user['class_id'],(string)$v['class_id']) != false){
@@ -49,7 +49,16 @@ class TeacherService
      */
     public static function claimClass($user,$class_id)
     {
-        //Message
+       return Message::insert([
+            'school_id' =>$user['school_id'],
+            'teacher_id' =>$user['teacher_id'],
+            'teacher_type' =>1,
+            'teacher_name' =>$user['teacher_name'],
+            'contact' =>$user['mobile'],
+            'status' => 0,
+            'position' => '班主任',
+            'ids' => $class_id
+        ]);
 
     }
 

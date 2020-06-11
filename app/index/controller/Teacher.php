@@ -93,14 +93,6 @@ class Teacher extends BaseController
             return json_error(11104);
         }
 
-        $classes = TeacherService::claimClass($userInfo,$class_id);
-
-        $ret_data = [
-            'teacher_name' => $userInfo['teacher_name'],
-            'user_role' => 1,
-            'classes' => $classes,
-        ];
-
-        return json_ok($ret_data,0);
+        return json_ok(TeacherService::claimClass($userInfo,$class_id),0);
     }
 }
