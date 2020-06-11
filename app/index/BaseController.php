@@ -71,7 +71,7 @@ abstract class BaseController
             // 登录
             'login',
             // 登录
-            'checkPhone',
+            'checkPhone', 
             // 发送验证码
             'sendCode',
             // 上传图片
