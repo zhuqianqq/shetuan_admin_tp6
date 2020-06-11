@@ -24,11 +24,21 @@ Route::any('stCourse', 'index/StTeacher/course');
 Route::any('schedule', 'index/StTeacher/schedule');
 //认领社团列表
 Route::any('allCourses', 'index/StTeacher/allCourses');
+//认领社团
+Route::any('claimCourses', 'index/StTeacher/claimCourses');
 
 
+//课程情况列表
+Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
 
 /******** 班主任课程情况&缺省 *******/
 Route::get('course', 'index/teacher/course');
+
+//认领班级列表
+Route::any('allClasses', 'index/teacher/allClasses');
+
+
+
 
 /******** 班主任查看某个学生课程记录详情*******/
 Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');

@@ -9,6 +9,7 @@ use think\facade\Db;
 use think\facade\Config;
 use think\facade\Cache;
 use app\index\model\BaseModel;
+use app\common\model\ClassModel;
 
 /**
  * 班主任
@@ -17,6 +18,32 @@ use app\index\model\BaseModel;
  */
 class TeacherService
 {
+    /**
+     * 认领班级列表
+     * @param  $user 老师信息   $grade 年级信息
+     * @return json
+     */
+    public static function allClasses($user,$grade)
+    {
+        
+        $classes = ClassModel::where(['school_id'=>$user['school_id'],'grade'=>$grade,'enable'=>1])
+                  ->field('class_id,class_name')
+                  ->select()->toArray();
+
+        return $classes;
+    }
+    
+    /**
+     * 认领班级操作
+     * @param  $user 老师信息   $grade 年级信息
+     * @return json 
+     */
+    public static function claimClass($user,$class_id)
+    {
+
+
+    }
+
 
 
     /**

@@ -4,45 +4,87 @@ namespace app\index\controller;
 use app\index\BaseController;
 use think\Request;
 use app\index\service\TeacherService;
+use app\common\model\Teacher as TModel;
 
 class Teacher extends BaseController
 {
-    public function index()
-    {
-        return '<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} a{color:#2E5CD5;cursor: pointer;text-decoration: none} a:hover{text-decoration:underline; } body{ background: #fff; font-family: "Century Gothic","Microsoft yahei"; color: #333;font-size:18px;} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.6em; font-size: 42px }</style><div style="padding: 24px 48px;"> <h1>:) 2020新春快乐</h1><p> ThinkPHP V' . \think\facade\App::version() . '<br/><span style="font-size:30px;">14载初心不改 - 你值得信赖的PHP框架</span></p><span style="font-size:25px;">[ V6.0 版本由 <a href="https://www.yisu.com/" target="yisu">亿速云</a> 独家赞助发布 ]</span></div><script type="text/javascript" src="https://tajs.qq.com/stats?sId=64890268" charset="UTF-8"></script><script type="text/javascript" src="https://e.topthink.com/Public/static/client.js"></script><think id="ee9b1aa918103c4fc"></think>';
-    }
+   
+    // /**
+    //  * 班主任课程情况&&缺省
+    //  * @param  Request $request
+    //  * @return json
+    //  */
+    // public function course(Request $request)
+    // {
+    //     $teacherId = $request->param('teacherId');
+    //     $action = $request->param('action'); //1.进行中 2.未开始
+    //     if(empty($teacherId)){
+    //         return json_error(100,'请传入班主任ID');
+    //     }
+    //     if(empty($action) || !in_array($action,[1,2])){
+    //         return json_error(100,'参数错误');
+    //     }
+    //     return TeacherService::course($teacherId,$action);
+    // }
+
+    // /**
+    //  * 班主任查看某个学生课程记录详情
+    //  * @param  Request $request
+    //  * @return json
+    //  */
+    // public function courseByStudentDetails(Request $request)
+    // {
+    //     $studentId = $request->param('studentId');
+
+    //     if(empty($studentId)){
+    //         return json_error(100,'请传入学生ID');
+    //     }
+
+    //     return TeacherService::courseByStudentDetails($studentId);
+    // }
+
+
     /**
-     * 班主任课程情况&&缺省
+     * 认领班级列表
      * @param  Request $request
      * @return json
      */
-    public function course(Request $request)
+    public function allClasses(Request $request)
     {
-        $teacherId = $request->param('teacherId');
-        $action = $request->param('action'); //1.进行中 2.未开始
-        if(empty($teacherId)){
-            return json_error(100,'请传入班主任ID');
+  
+        $grade = $request->param('grade',''); //年级
+        if(empty($grade)){
+            return json_error(100,'请传入年级信息');
         }
-        if(empty($action) || !in_array($action,[1,2])){
-            return json_error(100,'参数错误');
+
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
+
+        if(!$userInfo){
+            return json_error(11104);
         }
-        return TeacherService::course($teacherId,$action);
+
+        return json_ok(TeacherService::allClasses($userInfo,$grade),0);
     }
 
-    /**
-     * 班主任查看某个学生课程记录详情
+
+     /**
+     * 认领班级操作
      * @param  Request $request
      * @return json
      */
-    public function courseByStudentDetails(Request $request)
+    public function claimClass(Request $request)
     {
-        $studentId = $request->param('studentId');
-
-        if(empty($studentId)){
-            return json_error(100,'请传入学生ID');
+        $class_id = $request->param('class_id',''); //年级
+        if(empty($class_id)){
+            return json_error(100,'班级id');
         }
 
-        return TeacherService::courseByStudentDetails($studentId);
-    }
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
 
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
+        return json_ok(TeacherService::claimClass($userInfo,$class_id),0);
+    }
 }

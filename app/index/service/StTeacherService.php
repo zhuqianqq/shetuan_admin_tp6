@@ -65,8 +65,9 @@ class StTeacherService
 
         foreach ($courseInfo as $k => $v) {
             $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->column('teacher_name');
-            $courseInfo[$k]['nums'] = Student::where('course_id','like','%'.$v['course_id'].'%')->count();
             $courseInfo[$k]['teacher_name'] = implode($teacher_name, ',');
+            $courseInfo[$k]['nums'] = Student::where('course_id','like','%'.$v['course_id'].'%')->count();
+            
         }
 
         return $courseInfo;
@@ -98,6 +99,63 @@ class StTeacherService
 
         return $courseInfo;
     }
+
+
+    /**
+     * 课程情况列表
+     * @param string $user 社团老师信息
+     * @return json
+     */
+    public static function courseInfoList($user)
+    {
+        $action = request()->param('action',1); //1.进行中 2.已结束
+        $nowTime = date('H:i:s',time());
+
+        if($action == 1){
+
+            $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->field('course_id,course_name,start_time,end_time,class_place,weeks')
+                      ->where('status',1)
+                      ->where('start_time', '<', $nowTime)
+                      ->where('end_time', '>=', $nowTime)
+                      ->order('start_time','asc')->select()->toArray();
+
+        }else{
+
+            $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->field('course_id,course_name,start_time,end_time,class_place,weeks')
+                      ->where('status',1)
+                      ->where('end_time', '<', $nowTime)
+                      ->order('course_id','desc')->select()->toArray();
+        }
+        
+        if(!$courseInfo){
+            return [];
+        }
+
+        $todayCourses = [];
+        $weekday = date("w", time());
+        foreach ($courseInfo as $k => $v) {
+            if(strpos($v['weeks'], $weekday) != false){
+                $todayCourses[] = $v;
+            }
+        }
+
+        if(!$todayCourses){
+            return [];
+        }
+
+        foreach ($todayCourses as $k => $v) {
+            
+            $todayCourses[$k]['nums'] = Student::where('course_id','like','%'.$v['course_id'].'%')->count();
+            
+        }
+
+       return $todayCourses;
+
+    }
+
+
 
     /**
      * 班主任查看课程情况
