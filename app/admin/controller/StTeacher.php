@@ -38,6 +38,7 @@ class StTeacher extends BaseController
         $data['grade'] = input('post.grade', '', 'string');
         $data['teacherId'] = input('post.teacherId', '', 'string');
         $data['grade'] = str_replace('，', ',', $data['grade']);
+        $data['course_id'] = str_replace('，', ',', $data['course_id']);
 
         $result = StTeacherService::addOrUpdate($data);
         return json_ok($result);

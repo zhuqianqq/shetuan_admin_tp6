@@ -26,10 +26,6 @@ class StTeacherService
     {
         $where = '1=1 ';
         $bind = [];
-        if ($param['courseId'] != -1) {
-            $where .= 'AND course_id=:course_id';
-            $bind = ['course_id' => $param['courseId']];
-        }
 
         if (!empty($param['teacherInfo'])) {
             $where .= ' AND (teacher_name like "%'. $param['teacherInfo']. '%" OR mobile like "%'. $param['teacherInfo']. '%" OR user_id like "%'. $param['teacherInfo']. '%")';
@@ -40,11 +36,30 @@ class StTeacherService
             $where .= ' AND FIND_IN_SET('.$param['grade'].',grade)';
         }
 
+        if (!empty($param['courseId'])) {
+            $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
+        }
+
         $result = StTeacher::alias('t')
-            ->join(Course::class .' c','c.course_id = t.course_id')
             ->where($where, $bind)
-            ->field('teacher_name teacherName', '')
-            ->paginate($param['page_size'])->toArray();;
+            ->field('teacher_name teacherName,mobile,grade,course_id courseId')
+            ->paginate($param['page_size'])->toArray();
+
+        $courseInfo = Course::column('course_name','course_id');
+        $courseStr = '';
+        foreach ($result['data'] as $k => $v) {
+            if (strpos($v['courseId'], ',') !== false) {
+                $courseArr = explode(',', $v['courseId']);
+                foreach ($courseArr as $vv) {
+                    $courseStr .= $courseInfo[$vv] . '、';
+                }
+                $courseStr = mb_substr($courseStr, 0, -1);
+            } else
+                $courseStr .= $courseInfo[$v['courseId']];
+
+            $result['data'][$k]['course'] = $courseStr;
+            $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
+        }
 
         return $result;
     }
@@ -60,7 +75,7 @@ class StTeacherService
         if (empty($data['teacherId'])) {//新增
             $stTeach = new StTeacher();
         } else {
-            $stTeach = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $data['teacher_id']])->find();
+            $stTeach = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $data['teacherId']])->find();
             if (empty($stTeach)) {
                 throw new MyException(10004);
             }

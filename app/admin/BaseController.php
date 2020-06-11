@@ -50,7 +50,7 @@ abstract class BaseController
         $this->request = $this->app->request;
 
         // 控制器初始化
-        $this->initialize();
+        //$this->initialize();
     }
 
     // 初始化
