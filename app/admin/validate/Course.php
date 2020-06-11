@@ -38,7 +38,7 @@ class Course extends Validate
 
     //验证场景
     protected $scene = [
-        'save' => ['username', 'group_id', 'phone', 'email'],
+        'save' => ['course_name', 'status', 'weeks', 'start_time', 'end_time', 'class_place', 'grade'],
     ];
 
 

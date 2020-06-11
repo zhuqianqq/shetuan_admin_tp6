@@ -14,7 +14,7 @@ use think\facade\Route;
 /****----------测试--------------------***/
 Route::get('testAdmin', 'admin/index/hello');
 /****----------登录--------------------***/
-Route::any('login', 'admin/user/login');
+Route::post('login', 'admin/user/login');
 /****----------管理用户列表--------------------***/
 Route::get('sysUserList', 'admin/user/getSysUserList');
 /****----------管理用户详情--------------------***/
@@ -38,8 +38,12 @@ Route::post('sysClassDelete', 'admin/user/sysClassDelete');
 Route::post('sysClassAdd', 'admin/user/sysClassAdd');
 
 
-/****----------课程增加-------------------***/
-Route::post('courseAddOrUpdate', 'admin/course/courseAddOrUpdate');
+/****----------课程增加或修改-------------------***/
+Route::post('courseAddOrUpdate', 'admin/course/courseAddOrUpdate')->validate(\app\admin\validate\Course::class,'save');
+/****----------课程列表-------------------***/
 Route::get('courseList', 'admin/course/courseList');
+/****----------课程下架-------------------***/
 Route::post('courseDrop', 'admin/course/courseDrop');
+/****----------课程删除-------------------***/
+Route::post('courseDelete', 'admin/course/courseDelete');
 

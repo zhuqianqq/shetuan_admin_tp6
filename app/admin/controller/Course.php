@@ -3,10 +3,11 @@
 namespace app\admin\controller;
 
 use app\admin\BaseController;
-use app\admin\MyException;
 use app\admin\service\CourseService;
-use think\Request;
-use app\admin\service\SysUserService;
+use app\admin\validate\Course as VC;
+use think\exception\ValidateException;
+use think\annotation\Route;
+use think\annotation\route\Validate;
 
 class Course extends BaseController
 {
@@ -16,18 +17,20 @@ class Course extends BaseController
     public function courseList()
     {
         $param = [];
-        $param['page'] = input('page', '', 1);
-        $param['pageSize'] = input('pageSize', '', 10);
+        //$param['page'] = input('page', '', 1);
+        $param['page_size']= input('pageSize',10, 'int');
         $param['status'] = input('status', '-1', 'int');
         $param['weeks'] = input('weeks', '', 'int');
         $param['grade'] = input('grade', '', 'int');
         $param['course_name'] = input('courseName', '', 'string');
         $result = CourseService::courseList($param);
+
         return json_ok($result);
     }
 
     /**
      * 增加或修改课程
+     * @Validate(VC::class,scene="save",batch="true")
      */
     public function courseAddOrUpdate()
     {
@@ -50,11 +53,11 @@ class Course extends BaseController
     /**
      * 删除课程
      */
-    public function delete()
+    public function courseDelete()
     {
-        $food_id = input('param.food_id', '', 'int');
-        if (!$food_id) return json_error('14001');
-        $result = CourseService::deleteFood($food_id);
+        $courseId = input('post.courseId', '', 'int');
+        if (!$courseId) return json_error(10002);
+        $result = CourseService::courseDelete($courseId);
 
         return json_ok($result);
     }
@@ -67,6 +70,7 @@ class Course extends BaseController
         $courseId = input('post.courseId', '', 'int');
         if (!$courseId) return json_error(10002);
         $result = CourseService::courseDrop($courseId);
+
         return json_ok($result);
     }
 }
