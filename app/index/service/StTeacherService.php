@@ -12,6 +12,8 @@ use app\index\model\BaseModel;
 use app\common\model\Course;
 use app\common\model\TuanTeacher;
 use app\common\model\Student;
+use app\common\model\RollCall;
+
 
 /**
  * 社团老师
@@ -31,7 +33,7 @@ class StTeacherService
     {  
         $courseInfo = Course::where('course_id','in',$user['course_id'])
                       ->where('status',1)
-                      ->whereTime('end_time','>','now')
+                      ->whereTime('end_time','>',time())
                       ->select()->order('start_time','asc')->toArray();
         if(!$courseInfo){
             return [];
@@ -148,6 +150,24 @@ class StTeacherService
         foreach ($todayCourses as $k => $v) {
             
             $todayCourses[$k]['nums'] = Student::where('course_id','like','%'.$v['course_id'].'%')->count();
+
+            $rollCall = RollCall::where('course_id',$v['course_id'])
+            ->whereTime('create_time','today')
+            ->select();
+
+            $yidao = $qingjia = 0; //已到人数 请假人数
+            foreach ($rollCall as $k2 => $v2) {
+                if($v2['status'] == 2){
+                    $yidao++;
+                }
+
+                if($v2['status'] == 3){
+                    $qingjia++;
+                }
+            }
+
+            $todayCourses[$k]['qingjiaNums'] = $qingjia;
+            $todayCourses[$k]['weidaoNums'] =$todayCourses[$k]['nums'] - $yidao;
             
         }
 
