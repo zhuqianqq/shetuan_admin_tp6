@@ -4,6 +4,7 @@ namespace app\index\controller;
 use app\index\BaseController;
 use think\Request;
 use app\index\service\TeacherService;
+use app\common\model\TuanTeacher;
 
 class StTeacher extends BaseController
 {
@@ -15,6 +16,13 @@ class StTeacher extends BaseController
      */
     public function course(Request $request)
     {
+        echo 123;die;
+        dd($request->user);
+        $userInfo = TuanTeacher::where($request->user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
         $teacherId = $request->param('teacherId');
         $action = $request->param('action'); //1.进行中 2.未开始
         if(empty($teacherId)){

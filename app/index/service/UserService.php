@@ -60,70 +60,41 @@ class UserService
 
 
     /**
-     * 小程序绑定手机号这一步才是真正的登录
+     * 小程序手机号码检测
      */
-    public function loginByMinWechatPhone()
+    public static function loginByMinWechatPhone($data)
     {
-        Db::startTrans();
-        try {
-            $userid = $this->request->post("user_id", '', "trim");
-//            $phone = $this->request->post("phone", '', "trim");
-            $code = $this->request->post("code", '', "trim");
-            $iv = $this->request->post("iv", '');
-            $encryptedData = $this->request->post("encryptedData", '');
-
-            if (empty($iv) || empty($encryptedData) || empty($code)) {
-                throw new \Exception("参数错误", 100);
-            }
+       
             // 判断是否已经绑定了手机号
-            $exist_user = Users::get($userid);
-            if(!empty($exist_user) && !empty($exist_user->userPhone)) {
-                // 判断手机号是否一致 如果不一致则直接返回
-                $data = Member::where('user_id', $userid)->find();
-                $data['access_key'] = $exist_user->access_key;
-                $data['userPhone'] = $exist_user->userPhone;
-                Db::commit();
-                return $this->outJson(0, "登录成功！",$data);
-            }
+            // $exist_user = Users::get($userid);
+            // if(!empty($exist_user) && !empty($exist_user->userPhone)) {
+            //     // 判断手机号是否一致 如果不一致则直接返回
+            //     $data = Member::where('user_id', $userid)->find();
+            //     $data['access_key'] = $exist_user->access_key;
+            //     $data['userPhone'] = $exist_user->userPhone;
+            //     Db::commit();
+            //     return $this->outJson(0, "登录成功！",$data);
+            // }
             
-            $loginInfo = WechatHelper::getWechatLoginInfo($code, $iv, $encryptedData); //以code换取openid
+            $loginInfo = WechatHelper::getWechatLoginInfo($data['code'], $data['iv'], $data['encryptedData']); // 以code换取openid
+
             if (empty($loginInfo)) {
-                throw new \Exception("获取信息失败" . json_encode($loginInfo), 100);
+                throw new MyException(12006);
             }
             $loginInfo = json_decode($loginInfo, true);
             $phone = $loginInfo['phoneNumber'];
 
-            if (ValidateHelper::isMobile($phone) == false || !$userid) {
-                throw new \Exception("参数错误", 100);
+            if($data['user_role'] == 1){
+                $exist_user = Teacher::where('mobile',$phone)->find();
+            }else if($data['user_role'] == 2){
+                $exist_user = TuanTeacher::where('mobile',$phone)->find();
+            }
+            
+            if(!$exist_user) {
+                throw new MyException(12014);
             }
 
-            $exist_user= Users::where('userPhone = ' . $phone . " and plat = 1")->find();
-            if($exist_user != null) {
-                return $this->outJson(100, "此手机号已绑定其它账号！");
-            }
-
-            Users::where([
-                "userId" => $userid,
-            ])->update([
-                'userPhone' => $phone,
-            ]);
-
-            $data = Member::where('user_id', $userid)->find();
-            Member::setOtherInfo($data);
-            $data['userPhone'] = $phone;
-            Users::where([
-                "userId" => $userid,
-            ])->update([
-                'access_key' => $data['access_key']
-            ]);
-
-            Db::commit();
-        } catch (\Exception $e) {
-            Db::rollback();
-            return $this->outJson(0, "登录失败", $e->getMessage() ?? '接口异常');
-        }
-
-        return $this->outJson(0, "登录成功", $data);
+            return ['phone'=>$exist_user['mobile']];
     }
 
 
@@ -134,6 +105,7 @@ class UserService
      */
     public static function loginByMinWechat($data)
     {
+
         $loginInfo = WechatHelper::getWechatLoginInfo($data['code'], $data['iv'], $data['encryptedData']); // 以code换取openid
         if (empty($loginInfo)) {
             throw new MyException(12006);
@@ -145,7 +117,7 @@ class UserService
         if (empty($loginInfo)) {
             throw new MyException(12006);
         }
-        if (empty($openId)) {
+        if (empty($openId) || empty($unionId)) {
             throw new MyException(12013);
         }
 
@@ -164,23 +136,29 @@ class UserService
     {
         $unionid = $data['unionid'];
         $openid = $data['openid'];
-       
-        if (empty($unionid)) throw new MyException(12013);
+        $userRole = $data['user_role'];
 
-        $findByPhone = User::where(['unionid' => $unionid])->find();
+        $findByPhone = User::where(['open_id' => $openid])->find();
 
         if (empty($findByPhone)) {
             // 没有数据，则进行注册
             $userid = static::register($data); // 注册用户
+        }else{
+            $userid = $findByPhone['user_id'];
         } 
 
         $genToken = [];
         $genToken['user_id'] = $userid;
-        $genToken['phone'] = '';
+        $genToken['phone'] = $data['phone'];
         $userToken = static::genToken($genToken);
 
+        $cacheKey = config('cachekeys.acc_key') . $userid;
+        $userLoginTime = config('system.user_login_time');
+        Cache::set($cacheKey, $userToken, $userLoginTime);
         $returnData['userId'] = $userid;
         $returnData['accessKey'] = $userToken;
+        $returnData['userRole'] = $userRole;
+
         return $returnData;
     }
 
@@ -197,11 +175,12 @@ class UserService
             'register_time' => date("Y-m-d H:i:s"),
         ];
         $userid = User::insertGetId($insert_data);
+
         //用户角色  1-学校老师  2-社团老师  3-家长
         if($data["user_role"] == 1){
-            //TuanTeacher::insert()
+            Teacher::where('mobile',$data['phone'])->update(['user_id'=>$userid,'head_image'=>$data["avatar"]]);
         }else if($data["user_role"] == 2){
-            //Teacher::insert()
+            TuanTeacher::where('mobile',$data['phone'])->update(['user_id'=>$userid,'head_image'=>$data["avatar"]]);
         }
 
         return $userid;
@@ -214,8 +193,8 @@ class UserService
      */
     public static function getInfoById($userid)
     {
-        $userTable = User::$_table;
-        return Db::name($userTable)->where(['user_id' => $userid])->find();
+ 
+        return Db::name('user')->where(['user_id' => $userid])->find();
     }
 
 
@@ -233,6 +212,7 @@ class UserService
         $payload['user_id'] = $data['user_id'];
         $payload['phone'] = $data['phone'];
         $payload['login_time'] = $time;
+
         $user_token = think_encrypt(JwtUtil::encode($payload));
         return $user_token;
     }

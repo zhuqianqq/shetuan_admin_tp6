@@ -7,6 +7,8 @@ class WechatHelper
 {
     public static function getWechatLoginInfo($code, $iv, $encryptedData)
     {
+        Tools::addLog("wechat", "iv", $iv);
+        Tools::addLog("wechat", "encryptedData", $encryptedData);
         $wechat_config = config('weixin');
         $realUrl = 'https://api.weixin.qq.com/sns/jscode2session?appid=' . $wechat_config['appid'] . '&secret=' . $wechat_config['secret'] . '&js_code=' . $code . '&grant_type=authorization_code';
         $res = Tools::curlGet($realUrl, null);
@@ -18,6 +20,7 @@ class WechatHelper
         $pc = new WXBizDataCrypt ($wechat_config['appid'], $session_key);
         $errCode = $pc->decryptData($encryptedData, $iv, $data);
         Tools::addLog("wechat", "取得微信授权结果decryptData", $data);
+        Tools::addLog("wechat", "errCode", $errCode);
         if ($errCode == 0) {
             return $data;
         } else {
