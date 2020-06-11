@@ -18,7 +18,12 @@ Route::any('login', 'index/user/loginByMinWechat');
 Route::any('phoneCheck', 'index/user/loginByMinWechatPhone');
 
 /******** 社团老师课程情况&缺省 *******/
+//社团老师首页接口
 Route::any('stCourse', 'index/StTeacher/course');
+//社团老师排课计划
+Route::any('schedule', 'index/StTeacher/schedule');
+//认领社团列表
+Route::any('allCourses', 'index/StTeacher/allCourses');
 
 
 

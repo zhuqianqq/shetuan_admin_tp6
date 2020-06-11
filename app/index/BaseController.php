@@ -96,21 +96,24 @@ abstract class BaseController
             if (empty($userToken)) {
                 throw new MyException(11101);
             }
-             // if($userToken != 'abc123456'){
-             //     throw new MyException(11101);
-             // }
+
+            // if($userToken != 'abc123456'){
+            //       throw new MyException(11101);
+            // }
 
             $userToken = think_decrypt($userToken);
             $payload = JwtUtil::decode($userToken);
+
             if ($payload === false || empty($payload->user_id) || empty($payload->login_time)) {
                throw new MyException(11101);
             }
 
-            $cacheKey = config('cachekeys.acc_key') . $payload->user_id;
-            $isLogout = Cache::get($cacheKey);
-            if (!$isLogout) {
-               throw new MyException(11102);
-            }
+            //$cacheKey = config('cachekeys.acc_key') . $payload->user_id;
+            //$isLogout = Cache::get($cacheKey);
+           
+            // if (!$isLogout) {
+            //    throw new MyException(11102);
+            // }
 
             // 实时用户数据
             $user = UserService::getInfoById($payload->user_id);

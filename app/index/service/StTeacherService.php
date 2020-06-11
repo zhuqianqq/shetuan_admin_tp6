@@ -11,6 +11,7 @@ use think\facade\Cache;
 use app\index\model\BaseModel;
 use app\common\model\Course;
 use app\common\model\TuanTeacher;
+use app\common\model\Student;
 
 /**
  * 社团老师
@@ -29,6 +30,7 @@ class StTeacherService
     public static function index($user)
     {  
         $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->where('status',1)
                       ->whereTime('end_time','>','now')
                       ->select()->order('start_time','asc')->toArray();
         if(!$courseInfo){
@@ -51,21 +53,42 @@ class StTeacherService
      * @param string $user 社团老师信息
      * @return json
      */
-    public static function schedule($user)
+    public static function mySchedule($user)
     {
         $courseInfo = Course::where('course_id','in',$user['course_id'])
-                      ->select()->order('course_id','desc')->toArray();
+                      ->where('status',1)
+                      ->field('course_id,course_name')
+                      ->order('course_id','desc')->select()->toArray();
         if(!$courseInfo){
             return [];
         }
 
         foreach ($courseInfo as $k => $v) {
-            $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->columns('teacher_name');
-            $courseInfo[$k]['teacher_name'] = $teacher_name;
+            $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->column('teacher_name');
+            $courseInfo[$k]['nums'] = Student::where('course_id','like','%'.$v['course_id'].'%')->count();
+            $courseInfo[$k]['teacher_name'] = implode($teacher_name, ',');
         }
+
+        return $courseInfo;
     }
 
-    
+     /**
+     * 社团老师排课计划
+     * @param string $user 社团老师信息
+     * @return json
+     */
+    public static function allCourses($user)
+    {
+        $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->where('status',1)
+                      ->field('course_id,course_name')
+                      ->order('course_id','desc')->select()->toArray();
+        if(!$courseInfo){
+            return [];
+        }
+
+        return $courseInfo;
+    }
 
     /**
      * 班主任查看课程情况
