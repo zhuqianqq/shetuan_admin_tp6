@@ -29,6 +29,15 @@ class Course extends BaseController
     }
 
     /**
+     * 课程
+     */
+    public function courseInfo()
+    {
+        $result = CourseService::courseInfo();
+        return json_ok($result);
+    }
+
+    /**
      * 增加或修改课程
      * @Validate(VC::class,scene="save",batch="true")
      */

@@ -9,12 +9,12 @@ use app\admin\validate\stTeacher as VT;
 use think\exception\ValidateException;
 
 
-class StTeacher extends BaseController
+class Teacher extends BaseController
 {
     /**
-     * 社团老师列表
+     * 班主任老师列表
      */
-    public function stTeacherList()
+    public function teacherList()
     {
         $param = [];
         $param['page_size']= input('pageSize',10, 'int');
@@ -23,14 +23,14 @@ class StTeacher extends BaseController
         $param['teacherInfo'] = input('teacherInfo', '', 'string');
         $result = StTeacherService::stTeacherList($param);
 
-        return json_ok($result);
+        return json_ok($result);t
     }
 
     /**
-     * 增加或修改社团老师
+     * 增加或修改老师
      * @Validate(VT::class,scene="save",batch="true")
      */
-    public function stTeacherAddOrUpdate()
+    public function eacherAddOrUpdate()
     {
         $data['teacher_name'] = input('post.teacherName', '', 'string');
         $data['mobile'] = input('post.mobile', '', 'string');

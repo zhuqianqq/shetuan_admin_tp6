@@ -11,18 +11,18 @@ use app\common\model\TuanTeacher;
 use app\common\model\User;
 
 /**
- * 社团老师
- * Class FoodService
+ * 老师
+ * Class TeacherService
  * @package app\service
  * @author  2066362155@qq.com
  */
-class StTeacherService
+class TeacherService
 {
 
     /**
      * 课程列表
      */
-    public static function stTeacherList($param)
+    public static function eacherList($param)
     {
         $where = '1=1 ';
         $bind = [];
@@ -42,7 +42,7 @@ class StTeacherService
 
         $result = StTeacher::alias('t')
             ->where($where, $bind)
-            ->field('teacher_id teacherId,teacher_name teacherName,mobile,grade,course_id courseId')
+            ->field('teacher_name teacherName,mobile,grade,course_id courseId')
             ->paginate($param['page_size'])->toArray();
 
         $courseInfo = Course::column('course_name','course_id');

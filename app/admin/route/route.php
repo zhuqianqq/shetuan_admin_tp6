@@ -42,6 +42,8 @@ Route::post('sysClassAdd', 'admin/user/sysClassAdd');
 Route::post('courseAddOrUpdate', 'admin/course/courseAddOrUpdate')->validate(\app\admin\validate\Course::class,'save');
 /****----------课程列表-------------------***/
 Route::get('courseList', 'admin/course/courseList');
+/****----------获取所有课程信息-------------------***/
+Route::get('courseInfo', 'admin/course/courseInfo');
 /****----------课程上下架-------------------***/
 Route::post('courseOnOrOff', 'admin/course/courseOnOrOff');
 /****----------课程删除-------------------***/
@@ -52,7 +54,13 @@ Route::post('courseDelete', 'admin/course/courseDelete');
 Route::post('stTeacherAddOrUpdate', 'admin/stTeacher/stTeacherAddOrUpdate')->validate(\app\admin\validate\stTeacher::class,'save');
 /****----------社团老师列表-------------------***/
 Route::get('stTeacherList', 'admin/stTeacher/stTeacherList');
-/****----------课程上下架-------------------***/
-Route::post('courseOnOrOff', 'admin/stTeacher/courseOnOrOff');
 /****----------社团老师删除-------------------***/
-Route::post('courseDelete', 'admin/stTeacher/courseDelete');
+Route::post('stTecherDelete', 'admin/stTeacher/stTecherDelete');
+
+
+/****----------班主任增加或修改-------------------***/
+Route::post('stTeacherAddOrUpdate', 'admin/stTeacher/stTeacherAddOrUpdate')->validate(\app\admin\validate\stTeacher::class,'save');
+/****----------班主任老师列表-------------------***/
+Route::get('stTeacherList', 'admin/stTeacher/stTeacherList');
+/****----------班主任老师删除-------------------***/
+Route::post('stTecherDelete', 'admin/stTeacher/stTecherDelete');
