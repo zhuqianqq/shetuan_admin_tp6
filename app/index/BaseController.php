@@ -73,7 +73,7 @@ abstract class BaseController
             // 登录
             'phoneCheck', 
             // 发送验证码
-            'sendCode',
+            'sendCode',  
             // 上传图片
             'upload',
             // 初始化
