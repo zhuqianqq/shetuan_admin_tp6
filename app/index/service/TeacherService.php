@@ -36,7 +36,7 @@ class TeacherService
     /**
      * 认领班级操作
      * @param  $user 老师信息   $grade 年级信息
-     * @return json
+     * @return json 
      */
     public static function claimClass($user,$class_id)
     {
