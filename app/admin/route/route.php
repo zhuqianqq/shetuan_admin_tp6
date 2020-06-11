@@ -47,3 +47,12 @@ Route::post('courseOnOrOff', 'admin/course/courseOnOrOff');
 /****----------课程删除-------------------***/
 Route::post('courseDelete', 'admin/course/courseDelete');
 
+
+/****----------课程增加或修改-------------------***/
+Route::post('stTeacherAddOrUpdate', 'admin/stTeacher/stTeacherAddOrUpdate')->validate(\app\admin\validate\stTeacher::class,'save');
+/****----------课程列表-------------------***/
+Route::get('courseList', 'admin/stTeacher/courseList');
+/****----------课程上下架-------------------***/
+Route::post('courseOnOrOff', 'admin/stTeacher/courseOnOrOff');
+/****----------课程删除-------------------***/
+Route::post('courseDelete', 'admin/stTeacher/courseDelete');

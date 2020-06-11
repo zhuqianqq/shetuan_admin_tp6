@@ -68,8 +68,8 @@ class Course extends BaseController
     public function courseOnOrOff()
     {
         $courseId = input('post.courseId', '', 'int');
-        $status = input('post.status', '', 'int');
-        if (!$courseId || !$status) return json_error(10002);
+        $status = input('post.status', '-1', 'int');
+        if (!$courseId || !in_array($status, [0, 1])) return json_error(10002);
         $result = CourseService::courseOnOrOff($courseId, $status);
 
         return json_ok($result);
