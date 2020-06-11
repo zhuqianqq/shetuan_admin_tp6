@@ -27,15 +27,15 @@ Route::post('sysUserDelete', 'admin/user/sysUserDelete');
 Route::post('sysUserAdd', 'admin/user/sysUserAdd');
 
 /****----------班级列表--------------------***/
-Route::get('sysClassList', 'admin/user/getSysClassList');
+Route::get('sysClassList', 'admin/SysClass/getSysClassList');
 /****----------班级详情--------------------***/
-Route::get('sysClassDetails', 'admin/user/sysClassDetails');
+Route::get('sysClassDetails', 'admin/SysClass/sysClassDetails');
 /****----------班级修改-------------------***/
-Route::post('sysClassUpdate', 'admin/user/sysClassUpdate');
+Route::post('sysClassUpdate', 'admin/SysClass/sysClassUpdate');
 /****----------班级修改-------------------***/
-Route::post('sysClassDelete', 'admin/user/sysClassDelete');
+Route::post('sysClassDelete', 'admin/SysClass/sysClassDelete');
 /****----------班级增加-------------------***/
-Route::post('sysClassAdd', 'admin/user/sysClassAdd');
+Route::post('sysClassAdd', 'admin/SysClass/sysClassAdd');
 
 
 /****----------课程增加或修改-------------------***/

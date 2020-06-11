@@ -51,7 +51,7 @@ class CourseService
      */
     public static function courseInfo()
     {
-        $res = Course::where('status', 1)->field('course_id courseId,course_name courseName,weeks,start_time,end_time,course_type courseType,class_place classPlace,grade')->select();
+        $res = Course::where('status', 1)->field('course_id courseId,course_name courseName,weeks,start_time startTime,end_time endTime,course_type courseType,class_place classPlace,grade')->select();
         if (empty($res)) {
             return [];
         }

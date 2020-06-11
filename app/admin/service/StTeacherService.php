@@ -58,7 +58,7 @@ class StTeacherService
                 $courseStr .= $courseInfo[$v['courseId']];
 
             $result['data'][$k]['course'] = $courseStr;
-            $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
+            $result['data'][$k]['gradeName'] = str_replace(',', '、', $v['grade']) . '年级';
         }
 
         return $result;
@@ -86,7 +86,6 @@ class StTeacherService
         if (count($courseArr) != count($courseInfo)) {
             throw new MyException(10004);
         }
-        $stTeach->user_id = '';
         $stTeach->head_image = '';
         $stTeach->teacher_name = $data['teacher_name'];
         $stTeach->mobile = $data['mobile'];
