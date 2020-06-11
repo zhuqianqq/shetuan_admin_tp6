@@ -3,8 +3,10 @@ declare (strict_types=1);
 
 namespace app\admin\service;
 
-
+use app\admin\MyException;
 use app\admin\util\JwtUtil;
+use app\common\model\ClassModel;
+use app\common\model\Student;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Cache;
@@ -25,33 +27,80 @@ class SysClassService
     public static function getSysClassList($param)
     {
 
-        $model = Db::table('sys_user')->alias('sy');
-        if (!empty($param['condition'])) {
-            $where = 'sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
-            $model->where($where);
+        $where = '1=1 ';
+        $bind = [];
+
+        if (!empty($param['studentInfo'])) {
+            $where .= ' AND (teacher_name like "%'. $param['teacherInfo']. '%" OR mobile like "%'. $param['teacherInfo']. '%" OR user_id like "%'. $param['teacherInfo']. '%")';
         }
-        $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime')
-            ->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
-        if (empty($res)) {
-            return json_ok((object)array(), 0);
+
+
+        if (!empty($param['grade'])) {
+            $where .= ' AND FIND_IN_SET('.$param['grade'].',grade)';
         }
-        $list = ['total' => $res['total'], 'currentPage' => $res['current_page'], 'lastPage' => $res['last_page'], 'data' => $res['data']];
-        return json_ok($list, 0);
+
+        if (!empty($param['courseId'])) {
+            $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
+        }
+
+        $sql = 'select * from (
+                  select 
+                    '.ClassModel::$_table. ' c 
+                
+                )a';
+        $result = ClassModel::alias('c')
+            ->join(Student::$_table . ' s', 's.class_id=c.class_id')
+            ->where($where, $bind)
+            ->field('teacher_name teacherName,mobile,grade,course_id courseId,sum(student_id) studentNum')
+            ->group('c.class_id')
+            ->paginate($param['pageSize'])->toArray();
+print_r($result);die;
+        $courseInfo = Course::column('course_name','course_id');
+        $courseStr = '';
+        foreach ($result['data'] as $k => $v) {
+            if (strpos($v['courseId'], ',') !== false) {
+                $courseArr = explode(',', $v['courseId']);
+                foreach ($courseArr as $vv) {
+                    $courseStr .= $courseInfo[$vv] . '、';
+                }
+                $courseStr = mb_substr($courseStr, 0, -1);
+            } else
+                $courseStr .= $courseInfo[$v['courseId']];
+
+            $result['data'][$k]['course'] = $courseStr;
+            $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
+        }
+
+        return $result;
     }
 
 
     /**
-     * 班级详情
-     * @param string $sysUserId 管理员ID
+     * 班级新增或删除
      * @return json
      */
-    public static function sysClassDetails($sysClassId)
+    public static function addOrUpdate($data)
     {
-        $res = Db::table('st_class')->alias('sc')->field('sc.class_id as classId,sc.class_name as className,sc.grade,sy.school_id as schoolId')->where('class_id', $sysClassId)->find();
-        if (empty($res)) {
-            return json_ok((object)array(), 0);
+        if (empty($data['class_id'])) {//新增
+            $class = new ClassModel();
+        } else {
+            $class = ClassModel::where('class_id=:class_id', ['class_id' => $data['class_id']])->find();
+            if (empty($class)) {
+                throw new MyException(10004);
+            }
         }
-        return json_ok($res, 200);
+
+        $class->class_name = $data['class_name'];
+        $class->grade = $data['grade'];
+        $class->school_id = 1;
+
+        try {
+            $class->save();
+        } catch (\Exception $e){
+            throw new MyException(10001, $e->getMessage());
+        }
+
+        return (object)[];
     }
 
     /**
