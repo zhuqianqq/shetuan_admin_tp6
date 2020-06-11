@@ -30,7 +30,7 @@ class StTeacher extends BaseController
             'courses' => $courses,
             'today' => date('Y-m-d',time())
         ];
-        return json_ok($ret_data);
+        return json_ok($ret_data,0);
     }
 
 
@@ -46,16 +46,39 @@ class StTeacher extends BaseController
         if(!$userInfo){
             return json_error(11104);
         }
-        $courses = StTeacherService::schedule($userInfo);
-        $ret_data = [
-            'teacher_name' => $userInfo['teacher_name'],
-            'head_image' => $userInfo['head_image'],
-            'courses' => $courses,
-            'today' => date('Y-m-d',time())
-        ];
-        return json_ok($ret_data);
+        $courses = StTeacherService::mySchedule($userInfo);
+        
+        return json_ok($courses,0);
     }
 
+    /**
+     * 认领社团列表
+     * @param  Request $request
+     * @return json
+     */
+    public function allCourses(Request $request)
+    {
+        
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
+        }
+        $courses = StTeacherService::allCourses($userInfo);
+        
+        return json_ok($courses,0);
+    }
+
+
+    /**
+     * 认领社团操作
+     * @param  Request $request
+     * @return json
+     */
+    public function claimCourses(Request $request)
+    {
+        $studentId = $request->param('course_id');
+
+    }
     /**
      * 班主任查看某个学生课程记录详情
      * @param  Request $request
