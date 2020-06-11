@@ -18,7 +18,7 @@ class SysClass extends BaseController
         $param = [];
         $param['page'] = $request->param('page', 1);
         $param['pageSize'] = $request->param('pageSize', 10);
-        $param['condition'] = $request->param('condition');
+        $param['studentInfo'] = $request->param('condition');
         return SysClassService::getSysClassList($param);
     }
 

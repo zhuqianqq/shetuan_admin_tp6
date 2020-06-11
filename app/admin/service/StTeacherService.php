@@ -46,8 +46,9 @@ class StTeacherService
             ->paginate($param['page_size'])->toArray();
 
         $courseInfo = Course::column('course_name','course_id');
-        $courseStr = '';
+
         foreach ($result['data'] as $k => $v) {
+            $courseStr = '';
             if (strpos($v['courseId'], ',') !== false) {
                 $courseArr = explode(',', $v['courseId']);
                 foreach ($courseArr as $vv) {
