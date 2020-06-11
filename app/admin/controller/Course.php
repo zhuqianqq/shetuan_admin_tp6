@@ -12,11 +12,17 @@ class Course extends BaseController
 {
     /**
      * 课程列表
-     * @Route("getEateryFoods", method="POST")
      */
-    public function getEateryFoods()
+    public function courseList()
     {
-        $result = F::getInfo();
+        $param = [];
+        $param['page'] = input('page', '', 1);
+        $param['pageSize'] = input('pageSize', '', 10);
+        $param['status'] = input('status', '-1', 'int');
+        $param['weeks'] = input('weeks', '', 'int');
+        $param['grade'] = input('grade', '', 'int');
+        $param['course_name'] = input('courseName', '', 'string');
+        $result = CourseService::courseList($param);
         return json_ok($result);
     }
 
@@ -42,16 +48,25 @@ class Course extends BaseController
     }
 
     /**
-     * 删除菜品
-     * @Route("delete", method="GET")
-     * @Validate(VF::class,scene="delete",batch="true")
+     * 删除课程
      */
     public function delete()
     {
         $food_id = input('param.food_id', '', 'int');
         if (!$food_id) return json_error('14001');
-        $result = F::deleteFood($food_id);
+        $result = CourseService::deleteFood($food_id);
 
+        return json_ok($result);
+    }
+
+    /**
+     * 课程下架
+     */
+    public function courseDrop()
+    {
+        $courseId = input('post.courseId', '', 'int');
+        if (!$courseId) return json_error(10002);
+        $result = CourseService::courseDrop($courseId);
         return json_ok($result);
     }
 }
