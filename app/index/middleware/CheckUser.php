@@ -83,7 +83,9 @@ class CheckUser
         }
 
         $user['phone'] = $payload->phone;
-        $request->user = $user;
+        $request->st_user = $user;
+        //var_dump($request->st_user);die();
+        //var_dump($request);die();
         return $next($request);
     }
 }

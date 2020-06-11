@@ -9,6 +9,7 @@ use think\facade\Db;
 use think\facade\Config;
 use think\facade\Cache;
 use app\index\model\BaseModel;
+use app\common\model\Course;
 
 /**
  * 社团老师
@@ -18,6 +19,30 @@ use app\index\model\BaseModel;
 class StTeacherService
 {
 
+
+    /**
+     * 社团老师课程首页
+     * @param string $user 社团老师信息
+     * @return json
+     */
+    public static function index($user)
+    {
+        $todayCourses = [];
+        $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->whereTime('end_time','>','now')
+                      ->select()->order('start_time','asc')->toArray();
+        if(!$courseInfo){
+            return $todayCourses;
+        }
+    
+        $weekday = date("w", time());
+        foreach ($courseInfo as $k => $v) {
+            if(strpos($v['weeks'], $weekday) != false){
+                $todayCourses[] = $v;
+            }
+        }
+        return $todayCourses;
+    }
 
     /**
      * 班主任查看课程情况

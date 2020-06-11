@@ -4,34 +4,33 @@ namespace app\index\controller;
 use app\index\BaseController;
 use think\Request;
 use app\index\service\TeacherService;
+use app\index\service\StTeacherService;
 use app\common\model\TuanTeacher;
+use app\common\model\Course;
 
 class StTeacher extends BaseController
 {
 
     /**
-     * 社团老师排课计划
+     * 社团老师排课首页
      * @param  Request $request
      * @return json
      */
     public function course(Request $request)
     {
-        echo 123;die;
-        dd($request->user);
-        $userInfo = TuanTeacher::where($request->user['user_id'])->find();
+        
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
         if(!$userInfo){
             return json_error(11104);
         }
-
-        $teacherId = $request->param('teacherId');
-        $action = $request->param('action'); //1.进行中 2.未开始
-        if(empty($teacherId)){
-            return json_error(100,'请传入班主任ID');
-        }
-        if(empty($action) || !in_array($action,[1,2])){
-            return json_error(100,'参数错误');
-        }
-        return TeacherService::course($teacherId,$action);
+        $courses = StTeacherService::index($userInfo);
+        $ret_data = [
+            'teacher_name' => $userInfo['teacher_name'],
+            'head_image' => $userInfo['head_image'],
+            'courses' => $courses,
+            'today' => date('Y-m-d',time())
+        ];
+        return json_ok($ret_data);
     }
 
     /**
