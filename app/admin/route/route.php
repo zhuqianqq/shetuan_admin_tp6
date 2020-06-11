@@ -36,3 +36,8 @@ Route::post('sysClassUpdate', 'admin/user/sysClassUpdate');
 Route::post('sysClassDelete', 'admin/user/sysClassDelete');
 /****----------班级增加-------------------***/
 Route::post('sysClassAdd', 'admin/user/sysClassAdd');
+
+
+/****----------课程增加-------------------***/
+Route::post('courseAddOrUpdate', 'admin/course/courseAddOrUpdate');
+

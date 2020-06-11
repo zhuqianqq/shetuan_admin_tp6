@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace app\admin\service;
 
 
+use app\admin\MyException;
 use app\admin\util\JwtUtil;
 use think\facade\Db;
 use think\facade\Config;
@@ -30,13 +31,14 @@ class SysUserService
         // 查找身份，验证身份
         $user = Db::table('sys_user')->where('account',$account)->find();
         if (empty($user)) {
-            return json_error(100,'没有此账户');
+            throw new MyException(11104);
         }
 
         //密码验证
         if ($user['password'] !== encrypt_pass($password)) {
-            return json_error(100,'密码错误');
+            throw new MyException(11105);
         }
+
         $user['login_time'] = date('Y-m-d H:i:s',time());
         // 令牌生成
         $user_token            = think_encrypt(JwtUtil::encode($user));
@@ -45,6 +47,18 @@ class SysUserService
         // 数据处理和令牌获取
 
         return array('user_token' => $user_token, 'account' => $user['account'], 'userName' => $user['user_name'], 'id' =>$user['user_id']);
+    }
+
+    /**
+     * 从缓存中删除用户的access_key
+     * @param int $user_id
+     * @param string $from
+     * @return bool
+     */
+    public static function forgetAccessKey($user_id)
+    {
+        $authKey = 'ACCESS_TOKEN:'. $user_id;
+        return Cache::delete($authKey);
     }
 
     /**

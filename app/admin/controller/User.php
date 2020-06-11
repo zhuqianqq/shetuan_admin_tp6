@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\BaseController;
+use app\admin\MyException;
 use think\Request;
 use app\admin\service\SysUserService;
 
@@ -31,6 +32,18 @@ class User extends BaseController
         $result = SysUserService::login($data['account'], $data['password']);
         return json_ok($result, 200);
 
+    }
+
+    /**
+     * 退出登录
+     */
+    public function loginOut(Request $request)
+    {
+        $user_id = $request->user_id;
+        if ($user_id) {
+            SysUserService::forgetAccessKey($this->user_id);
+        }
+        return json_ok();
     }
 
     /**
