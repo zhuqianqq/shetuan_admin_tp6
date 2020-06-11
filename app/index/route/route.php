@@ -15,6 +15,12 @@ use think\facade\Route;
 //});
 /******** 登录 *******/
 Route::any('login', 'index/user/loginByMinWechat');
+Route::any('phoneCheck', 'index/user/loginByMinWechatPhone');
+
+/******** 社团老师课程情况&缺省 *******/
+Route::any('stCourse', 'index/StTeacher/course');
+
+
 
 /******** 班主任课程情况&缺省 *******/
 Route::get('course', 'index/teacher/course');

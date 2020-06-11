@@ -6,7 +6,7 @@
 
 return [
     // 默认缓存驱动
-    'default' => env('cache.driver', 'file'),
+    'default' => env('cache.driver', 'redis'),
 
     // 缓存连接方式配置
     'stores'  => [
@@ -25,5 +25,19 @@ return [
             'serialize'  => [],
         ],
         // 更多的缓存连接
+        'redis' => [
+            // 驱动方式
+            'type'       => 'redis',
+            'host'       => '127.0.0.1',
+            'port'       => 6379,
+            'password'   => '',
+            'select'     => 0,
+            'timeout'    => 0,
+            'expire'     => 0,
+            'persistent' => false,
+            'prefix'     => '',
+            'tag_prefix' => 'tag:',
+            'serialize'  => [],
+        ],
     ],
 ];
