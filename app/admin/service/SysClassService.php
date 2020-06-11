@@ -115,16 +115,16 @@ print_r($result);die;
         try {
             if (strpos($sysClassId, ',') !== false) {
 
-                Db::table('st_class')->where('class_id', 'in', $sysClassId)->update(['enable' => '2']);
+                ClassModel::where('class_id', 'in', $sysClassId)->update(['enable' => '2']);
             } else {
-                Db::table('st_class')->where('class_id', $sysClassId)->update(['enable' => '2']);
+                ClassModel::where('class_id', $sysClassId)->update(['enable' => '2']);
             }
         } catch (\Exception $e) {
             BaseModel::rollbackTrans();
             return json_error(100, $e->getMessage());
         }
         BaseModel::commitTrans();
-        return json_ok((object)array(), 200);
+        return (object)[];
     }
 
     /**
