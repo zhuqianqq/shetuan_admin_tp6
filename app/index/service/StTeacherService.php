@@ -79,12 +79,21 @@ class StTeacherService
      */
     public static function allCourses($user)
     {
-        $courseInfo = Course::where('course_id','in',$user['course_id'])
-                      ->where('status',1)
+        $courseInfo = Course::where('status',1)
                       ->field('course_id,course_name')
                       ->order('course_id','desc')->select()->toArray();
         if(!$courseInfo){
             return [];
+        }
+        
+        foreach ($courseInfo as $k => $v) {
+
+            if(strpos($user['course_id'],(string)$v['course_id']) != false){
+                $courseInfo[$k]['isChecked'] = 1;
+            }else{
+                $courseInfo[$k]['isChecked'] = 0;
+            }
+          
         }
 
         return $courseInfo;

@@ -30,7 +30,7 @@ class StTeacher extends BaseController
             'courses' => $courses,
             'today' => date('Y-m-d',time())
         ];
-        return json_ok($ret_data);
+        return json_ok($ret_data,0);
     }
 
 
@@ -48,11 +48,11 @@ class StTeacher extends BaseController
         }
         $courses = StTeacherService::mySchedule($userInfo);
         
-        return json_ok($courses);
+        return json_ok($courses,0);
     }
 
     /**
-     * 社团所有课程
+     * 认领社团列表
      * @param  Request $request
      * @return json
      */
@@ -65,9 +65,20 @@ class StTeacher extends BaseController
         }
         $courses = StTeacherService::allCourses($userInfo);
         
-        return json_ok($courses);
+        return json_ok($courses,0);
     }
 
+
+    /**
+     * 认领社团操作
+     * @param  Request $request
+     * @return json
+     */
+    public function claimCourses(Request $request)
+    {
+        $studentId = $request->param('course_id');
+
+    }
     /**
      * 班主任查看某个学生课程记录详情
      * @param  Request $request
