@@ -39,7 +39,7 @@ class CourseService
             $where .= ' AND grade FIND_IN_SET('.$param['grade'].',grade)';
         }
 
-        $result = Course::where($where, $bind)->select();
+        $result = Course::where($where, $bind)->paginate($param['page_size'])->toArray();;
 
         return $result;
     }
@@ -84,13 +84,16 @@ class CourseService
      * 删除课程
      * @param array $data
      */
-    public static function deleteFood($foodId){
-        $oneFood = F::find($foodId);
-        if (!$oneFood) {
-            throw new MyException(14002);
+    public static function courseDelete($coursId){
+        $oneCourse = Course::find($coursId);
+        if (empty($oneCourse)) {
+            throw new MyException(10004);
         }
-        if (!$oneFood->delete()) {
-            throw new MyException(14004);
+
+        try {
+            $oneCourse->delete();
+        } catch (\Exception $e) {
+            throw new MyException(10001, $e->getMessage());
         }
 
         return (object)[];
@@ -101,8 +104,8 @@ class CourseService
      * @param array $data
      */
     public static function courseDrop($coursId){
-        $oneCourse = CourseService::find($coursId);
-        if (!$oneCourse) {
+        $oneCourse = Course::find($coursId);
+        if (empty($oneCourse)) {
             throw new MyException(10004);
         }
 
