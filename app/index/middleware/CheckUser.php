@@ -50,7 +50,7 @@ class CheckUser
             return $next($request);
         }
 
-
+ 
         // JWT用户令牌认证，令牌内容获取
         $userToken = $request->header('x-access-token');
 
