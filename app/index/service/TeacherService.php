@@ -69,53 +69,32 @@ class TeacherService
      * @param string $teacherId 班主任ID
      * @return json
      */
-    public static function course($teacherId, $action)
+    public static function course($user)
     {
-        $model = Db::table('st_student')->alias('sst');
-        if ($action == 1) {
-            $model->where('ssh.start_time', '<', date('H:i:s', time()))
-                ->where('ssh.end_time', '>', date('H:i:s', time()));
-        } elseif ($action == 2) {
-            $model->where('ssh.start_time', '>', date('H:i:s', time()));
-        }
-        $weekArray = array("日", "一", "二", "三", "四", "五", "六");
-        $dateWeek = "星期" . $weekArray[date("w", time())];
-
-        $isTeacher = Db::table('st_teacher')->where('teacher_id', $teacherId)->where('is_headmaster', 1)->find();
-        if (!$isTeacher) {
-            return json_error(100, '未存在记录');
-        }
-        $class = Db::table('st_class')->where('class_id', $isTeacher['class_id'])->find();
-        if (!$class) {
-            return json_error(100, '未找到所属班级');
+       $courseInfo = Course::where('course_id','in',$user['course_id'])
+                      ->where('status',1)
+                      ->whereTime('end_time','>',time())
+                      ->select()->order('start_time','asc')->toArray();
+        if(!$courseInfo){
+            return [];
         }
 
-        $student = $model->field('sst.student_id as studentId,sst.student_num as studentNum,sst.student_name as studentName,ssh.course_id as courseId,ssh.course_name as courseName,ssh.weeks,stt.teacher_name as courseTeacherName,stt.mobile as courseTeacherMobile,ssh.start_time as startTime,ssh.end_time as endTime')
-            ->join('st_shetuan ssh', 'sst.course_id = ssh.course_id')
-            ->join('st_tuan_teacher stt', 'sst.course_id = stt.course_id')
-            ->where('sst.class_id', $class['class_id'])
-            ->where('ssh.weeks', $dateWeek)
-            ->select()->toArray();
-
-        $dateTime = date('Y-m-d 00:00:00', time());
-        foreach ($student as $key => $value) {
-            $student[$key]['status'] = Db::table('st_roll_call')->where('student_id', $value['studentId'])->where('create_time', '>', $dateTime)->value('status');
-        }
-        $res = [];
-        foreach ($student as $key => $value) {
-            $res[$value['courseName']][] = $value;
+        $todayCourses = [];
+        $weekday = date("w", time());
+        foreach ($courseInfo as $k => $v) {
+            if(strpos($v['weeks'], $weekday) != false){
+                $todayCourses[] = $v;
+            }
         }
 
-        foreach ($res as $key => $value) {
-            $status = array_column($value, 'status');
-            array_multisort($status, SORT_ASC, $res[$key]);
+        foreach ($todayCourses as $k2 => $v2) {
+            # code...
+            if($v2['start_time']){
+
+            }
+            $todayCourses[$k]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
         }
-        $list = [];
-        foreach ($res as $key => $value) {
-            $list[$key]['info'] = Db::table('st_shetuan')->where('course_name',$key)->find();
-            $list[$key]['data'] = $value;
-        }
-        return json_ok($list, 200);
+        return $todayCourses;
 
     }
 

@@ -9,23 +9,27 @@ use app\common\model\Teacher as TModel;
 class Teacher extends BaseController
 {
    
-    // /**
-    //  * 班主任课程情况&&缺省
-    //  * @param  Request $request
-    //  * @return json
-    //  */
-    // public function course(Request $request)
-    // {
-    //     $teacherId = $request->param('teacherId');
-    //     $action = $request->param('action'); //1.进行中 2.未开始
-    //     if(empty($teacherId)){
-    //         return json_error(100,'请传入班主任ID');
-    //     }
-    //     if(empty($action) || !in_array($action,[1,2])){
-    //         return json_error(100,'参数错误');
-    //     }
-    //     return TeacherService::course($teacherId,$action);
-    // }
+    /**
+     * 班主任课程情况&&缺省
+     * @param  Request $request
+     * @return json
+     */
+    public function course(Request $request)
+    {
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
+
+        if(!$userInfo){
+            return json_error(11104);
+        }
+        $courses = TeacherService::course($userInfo);
+        $ret_data = [
+            'teacher_name' => $userInfo['teacher_name'],
+            'head_image' => $userInfo['head_image'],
+            'courses' => $courses,
+            'today' => date('Y-m-d',time())
+        ];
+        return json_ok($ret_data,0);
+    }
 
     // /**
     //  * 班主任查看某个学生课程记录详情
