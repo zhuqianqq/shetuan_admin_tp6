@@ -33,6 +33,30 @@ class Teacher extends BaseController
         return json_ok($ret_data,0);
     }
 
+
+    /**
+     * 课程情况列表
+     * @param  Request $request
+     * @return json
+     */
+    public function courseInfo(Request $request)
+    {
+       
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
+
+        if(!$userInfo){
+            return json_error(11104);
+        }
+        
+        $courses = TeacherService::courseInfo($userInfo);
+
+        $ret_data = [ 
+            'courses' => $courses,
+            'today' => date('Y-m-d',time())
+        ];
+        return json_ok($ret_data,0); 
+
+    }
     // /**
     //  * 班主任查看某个学生课程记录详情
     //  * @param  Request $request

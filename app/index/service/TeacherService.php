@@ -14,6 +14,7 @@ use app\common\model\Message;
 use app\common\model\Course;
 use app\common\model\Student;
 use app\common\model\RollCall;
+use app\common\model\TuanTeacher;
 
 /**
  * 班主任
@@ -67,33 +68,15 @@ class TeacherService
 
 
     /**
-     * 班主任查看课程情况
+     * 班主任查看课程情况(首页)
      * @param string $user 用户信息
      * @return json
      */
     public static function course($user)
     {
-        //查询数据库中对应老师的学生所报班的ids start
-        $course_ids  = Student::where('class_id',$user['class_id'])
-                ->where('school_id',$user['school_id'])
-                ->Distinct(true)
-                ->column('course_id');
-
-        $course_ids_arr = [];
-
-        foreach ($course_ids as $key => $val) {
-            $temp = [];
-            if(strpos($val, ',') != false){
-                 $temp = explode(',', $val);
-                 foreach ($temp as $key2 => $val2) {
-                     $course_ids_arr[] = $val2;
-                 }
-            }else{
-                $course_ids_arr[] = $val;
-            }
-        }
-
-       $course_ids_arr = array_unique($course_ids_arr);
+       //查询数据库中对应老师的学生所报班的ids start
+       $course_ids_arr = self::getClassIds($user);
+        
        if(!$course_ids_arr){
             return [];
        }
@@ -141,8 +124,9 @@ class TeacherService
                 $todayCourses[$k2]['course_state'] = 3;
                 $todayCourses[$k2]['course_state_text'] = '课程进行中';
                 $rollCall = RollCall::where('course_id',$v2['course_id'])
-                ->whereTime('create_time','today')
-                ->select();
+                            ->where('school_id',$user['school_id'])
+                            ->whereTime('create_time','today')
+                            ->select();
 
                 $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
 
@@ -165,6 +149,139 @@ class TeacherService
         return $todayCourses;
 
     }
+
+    /**
+     * 课程情况列表
+     * @param string $user 用户信息
+     * @return json
+     */
+    public static function courseInfo($user)
+    {
+        $action = request()->param('action',1); //1.进行中 2.已结束
+        $nowTime = date('H:i:s',time());
+
+        //查询数据库中对应老师的学生所报班的ids start
+        $course_ids_arr = self::getClassIds($user);
+        
+        if(!$course_ids_arr){
+            return [];
+        }
+        //end
+        if($action == 1){
+
+            $courseInfo = Course::where('course_id','in',$course_ids_arr)
+                      ->field('course_id,course_name,start_time,end_time,class_place,weeks')
+                      ->where('status',1)
+                      ->where('start_time', '<', $nowTime)
+                      ->where('end_time', '>=', $nowTime)
+                      ->order('start_time','asc')->select()->toArray();
+
+        }else{
+
+            $courseInfo = Course::where('course_id','in',$course_ids_arr)
+                      ->field('course_id,course_name,start_time,end_time,class_place,weeks')
+                      ->where('status',1)
+                      ->where('end_time', '<', $nowTime)
+                      ->order('end_time','asc')->select()->toArray();
+        }
+
+                   
+        if(!$courseInfo){
+            return [];
+        }
+
+        $todayCourses = [];
+        $weekday = date("w", time());
+        foreach ($courseInfo as $k => $v) {
+            if(strpos($v['weeks'], $weekday) != false){
+                $todayCourses[] = $v;
+            }
+        }
+
+        foreach ($todayCourses as $k2 => $v2) {
+
+                $tuanTeacher = TuanTeacher::where('course_id','like','%'.$v2['course_id'].'%')
+                                ->field('teacher_name,mobile')
+                                ->select();
+
+                if($action == 1){
+  
+                        $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
+
+                        $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+
+                        $rollCall = RollCall::field('course_id,course_name,student_id,student_name,status')
+                                    ->where('course_id',$v2['course_id'])
+                                    ->where('school_id',$user['school_id'])
+                                    ->whereTime('create_time','today')
+                                    ->select();
+
+                        $todayCourses[$k2]['rollCall'] = $rollCall;
+
+                        $yidao = $weidao = 0; //已到人数 请假人数
+                        foreach ($rollCall as $k3 => $v3) {
+                            if($v3['status'] == 2){
+                                $yidao++;
+                            }
+
+                            if($v3['status'] == 3 || $v3['status'] == 1){
+                                $weidao++;
+                            }
+                        }
+                        $todayCourses[$k2]['yidao'] = $yidao;
+                        $todayCourses[$k2]['weidao'] = $weidao;
+                        $todayCourses[$k2]['studentList'] = [];
+
+                }else{
+
+                      $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
+                      $todayCourses[$k2]['rollCall'] = [];
+                      $todayCourses[$k2]['nums'] = 0;
+                      $todayCourses[$k2]['yidao'] = 0;
+                      $todayCourses[$k2]['weidao'] = 0;
+                      $todayCourses[$k2]['studentList'] = Student::where('course_id','like','%'.$v2['course_id'].'%')
+                                                          ->field('student_id,student_num,student_name')
+                                                          ->select();
+
+                }
+
+                
+        }
+
+         return $todayCourses; 
+
+    }
+    /**
+     * 获取对应老师下的对应学生所报班的ids
+     * @param string $studentId 学生ID
+     * @return json
+     */
+    public static function getClassIds($user)
+    {
+        $course_ids  = Student::where('class_id',$user['class_id'])
+                ->where('school_id',$user['school_id'])
+                ->Distinct(true)
+                ->column('course_id');
+
+        $course_ids_arr = [];
+
+        foreach ($course_ids as $key => $val) {
+            $temp = [];
+            if(strpos($val, ',') != false){
+                 $temp = explode(',', $val);
+                 foreach ($temp as $key2 => $val2) {
+                     $course_ids_arr[] = $val2;
+                 }
+            }else{
+                $course_ids_arr[] = $val;
+            }
+        }
+
+       $course_ids_arr = array_unique($course_ids_arr);
+       return $course_ids_arr;
+    }
+
+
 
     /**
      * 班主任查看某个学生课程记录详情
