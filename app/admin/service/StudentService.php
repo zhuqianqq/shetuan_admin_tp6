@@ -3,6 +3,7 @@ declare (strict_types=1);
 namespace app\admin\service;
 
 use app\admin\model\BaseModel;
+use app\common\model\ClassModel;
 use app\common\model\Course;
 use app\admin\MyException;
 use app\common\model\StTeacher;
@@ -45,8 +46,9 @@ class StudentService
         }
 
         $result = Student::alias('s')
+            ->join(ClassModel::$_table . ' c', 's.class_id=c.class_id')
             ->where($where, $bind)
-            ->field('student_num studentNum,mobile,student_name studentName,class_id classId,parent_name parentName,address')
+            ->field('student_id studentId,student_num studentNum,mobile,student_name studentName,class_id classId,parent_name parentName,address')
             ->paginate($param['page_size'])->toArray();
 
         return $result;
