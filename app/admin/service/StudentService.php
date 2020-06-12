@@ -36,7 +36,7 @@ class StudentService
 
 
         if (!empty($param['classId'])) {
-            $where .= ' AND class_id=:class_id';
+            $where .= ' AND s.class_id=:class_id';
             $bind['class_id'] = $param['classId'];
         }
 
@@ -48,7 +48,7 @@ class StudentService
         $result = Student::alias('s')
             ->join(ClassModel::$_table . ' c', 's.class_id=c.class_id')
             ->where($where, $bind)
-            ->field('student_id studentId,student_num studentNum,mobile,student_name studentName,class_id classId,parent_name parentName,address')
+            ->field('student_id studentId,student_num studentNum,mobile,student_name studentName,s.class_id classId,parent_name parentName,address,grade,class_name')
             ->paginate($param['page_size'])->toArray();
 
         return $result;
