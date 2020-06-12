@@ -19,14 +19,14 @@ class SysClass extends BaseController
         $param['page'] = input('page', 1);
         $param['pageSize'] = input('pageSize', 10);
         $param['grade'] = input('grade', '', 'int');
-        $param['classId'] = input('classId', '', 'int');
+        $param['className'] = input('className', '', 'int');
         $resutlt = SysClassService::getSysClassList($param);
 
         return json_ok($resutlt);
     }
 
     /**
-     * 课程
+     * 班级信息
      */
     public function classInfo()
     {
@@ -34,8 +34,10 @@ class SysClass extends BaseController
         return json_ok($result);
     }
 
+
+
     /**
-     * 增加或修改社团老师
+     * 增加或修改班级
      */
     public function classAddOrUpdate()
     {
@@ -48,7 +50,7 @@ class SysClass extends BaseController
     }
 
     /**
-     * 删除社团老师
+     * 删除班级
      */
     public function classDelete()
     {

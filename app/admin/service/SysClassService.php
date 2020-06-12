@@ -28,7 +28,7 @@ class SysClassService
     public static function getSysClassList($param)
     {
 
-        $where = '1=1 ';
+        $where = '1=1 AND enable=1';
         $bind = [];
 
         if (!empty($param['grade'])) {
@@ -36,9 +36,9 @@ class SysClassService
             $bind['grade'] = $param['grade'];
         }
 
-        if (!empty($param['classId'])) {
-            $where .= ' AND c.class_id=:class_id';
-            $bind['class_id'] = $param['classId'];
+        if (!empty($param['className'])) {
+            $where .= ' AND class_name=:class_name';
+            $bind['class_name'] = $param['className'];
         }
 
         $result = ClassModel::alias('c')
@@ -51,7 +51,7 @@ class SysClassService
         foreach ($result['data'] as $k => $v) {
             if (!empty($v['classId'])) {
                 //查找班主任
-                $where1 = 'is_headmaster = 1 AND FIND_IN_SET('.$v['classId'].',class_id)';
+                $where1 = 'is_headmaster = 1 AND FIND_IN_SET(' . $v['classId'] . ',class_id)';
                 $teacher_name = Teacher::where($where1)->value('teacher_name');
             }
             $result['data'][$k]['teacherName'] = $teacher_name ?? '';
@@ -96,7 +96,7 @@ class SysClassService
 
         try {
             $class->save();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             throw new MyException(10001, $e->getMessage());
         }
 

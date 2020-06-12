@@ -37,33 +37,14 @@ class TeacherService
             $where .= ' AND FIND_IN_SET('.$param['grade'].',grade)';
         }
 
-        if (!empty($param['courseId'])) {
-            $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
+        if (!empty($param['classId'])) {
+            $where .= ' AND FIND_IN_SET('.$param['classId'].',class_id)';
         }
 
         $result = Teacher::alias('t')
             ->where($where, $bind)
-            ->field('teacher_name teacherName,mobile,grade,course_id courseId,class_id classId')
+            ->field('teacher_name teacherName,mobile,grade,class_id classId')
             ->paginate($param['page_size'])->toArray();
-
-        $courseInfo = Course::column('course_name','course_id');
-
-        foreach ($result['data'] as $k => $v) {
-            $courseStr = '';
-            if (!empty($v['courseId'])) {
-                if (strpos($v['courseId'], ',') !== false) {
-                    $courseArr = explode(',', $v['courseId']);
-                    foreach ($courseArr as $vv) {
-                        $courseStr .= $courseInfo[$vv] . '、';
-                    }
-                    $courseStr = mb_substr($courseStr, 0, -1);
-                } else
-                    $courseStr .= $courseInfo[$v['courseId']];
-            }
-
-            $result['data'][$k]['course'] = $courseStr;
-            $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
-        }
 
         return $result;
     }

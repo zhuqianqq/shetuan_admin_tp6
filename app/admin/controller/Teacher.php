@@ -19,7 +19,7 @@ class Teacher extends BaseController
     {
         $param = [];
         $param['page_size']= input('pageSize',10, 'int');
-        $param['courseId'] = input('courseId', '', 'int');
+        $param['classId'] = input('classId', '', 'int');
         $param['grade'] = input('grade', '', 'int');
         $param['teacherInfo'] = input('teacherInfo', '', 'string');
         $result = TeacherService::teacherList($param);
