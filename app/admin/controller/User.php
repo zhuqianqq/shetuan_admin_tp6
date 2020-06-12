@@ -69,7 +69,7 @@ class User extends BaseController
     {
         $sysUserId = $request->param('sysUserId'); //管理用户ID
         if (empty($sysUserId)) {
-            return json_error(100, '请传入管理用户ID');
+            return json_error(10001);
         }
         return SysUserService::sysUserDetails($sysUserId);
     }
@@ -83,10 +83,11 @@ class User extends BaseController
     {
         $sysUserId = $request->param('sysUserId'); //管理用户ID
         if (empty($sysUserId)) {
-            return json_error(100, '请传入管理用户ID');
+            return json_error(10001);
         }
         return SysUserService::sysUserDelete($sysUserId);
     }
+
     /**
      * 管理用户修改
      * @param  Request $request
@@ -95,17 +96,17 @@ class User extends BaseController
     public function sysUserUpdate(Request $request)
     {
         $param = [];
-       // $param['nowUserId'] = $request->param('nowUserId'); //系统登录ID
+        // $param['nowUserId'] = $request->param('nowUserId'); //系统登录ID
         $param['sysUserId'] = $request->param('sysUserId'); //账户ID
-     //   $param['account'] = $request->param('account'); //登录账户
+        $param['account'] = $request->param('account'); //登录账户
         $param['userName'] = $request->param('userName');//真实姓名
         $param['enable'] = $request->param('enable', 1);//是否启用(默认启用)
         $param['password'] = $request->param('password');//密码
-//        if(empty( $param['nowUserId'])){
-//            return json_error(100, '请传入系统当前登录的用户ID');
-//        }
+        $param['mobile'] = $request->param('mobile');//手机
+        $param['userType'] = $request->param('userType');//角色
+
         if (empty($param['sysUserId'])) {
-            return json_error(100, '请传入账户ID');
+            return json_error(10001);
         }
         return SysUserService::sysUserUpdate($param);
     }
@@ -123,9 +124,12 @@ class User extends BaseController
         $param['enable'] = $request->param('enable', 1);//是否启用(默认启用)
         $param['password'] = $request->param('password');//密码
         $param['mobile'] = $request->param('mobile');//密码
-        if(empty($param['account']) || empty($param['userName']) || empty($param['enable']) ||empty($param['password'])){
-            return json_error(100, '缺少参数');
+        $param['userType'] = $request->param('userType');//角色
+        if (empty($param['account']) || empty($param['userName']) || empty($param['password']) || empty($param['userType'])) {
+            return json_error(10001);
         }
-        return SysUserService::sysUserAdd($param);
+        $res = SysUserService::sysUserAdd($param);
+
+        return json_ok($res);
     }
 }
