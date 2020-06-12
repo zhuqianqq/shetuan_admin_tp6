@@ -11,6 +11,7 @@ use think\facade\Db;
 use think\facade\Config;
 use think\facade\Cache;
 use app\admin\model\BaseModel;
+use \app\common\model\Teacher;
 
 /**
  * 班级
@@ -30,42 +31,30 @@ class SysClassService
         $where = '1=1 ';
         $bind = [];
 
-        if (!empty($param['studentInfo'])) {
-            $where .= ' AND (teacher_name like "%'. $param['teacherInfo']. '%" OR mobile like "%'. $param['teacherInfo']. '%" OR user_id like "%'. $param['teacherInfo']. '%")';
-        }
-
-
         if (!empty($param['grade'])) {
-            $where .= ' AND FIND_IN_SET('.$param['grade'].',grade)';
+            $where .= 'grade=:grade';
+            $bind['grade'] = $param['grade'];
         }
 
-        if (!empty($param['courseId'])) {
-            $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
+        if (!empty($param['classId'])) {
+            $where .= 'c.class_id=:class_id';
+            $bind['class_id'] = $param['classId'];
         }
-
 
         $result = ClassModel::alias('c')
-            ->join(Student::$_table . ' s', 's.class_id=c.class_id')
-            ->join(Student::$_table . ' s', 's.class_id=c.class_id')
+            ->leftJoin(Student::$_table . ' s', 's.class_id=c.class_id')
             ->where($where, $bind)
-            ->field('class_name className,mobile,grade,course_id courseId,sum(student_id) studentNum')
-            ->group('c.class_id')
+            ->field('c.class_id classId,class_name className,grade,count(student_id) studentNum,grade')
+            ->group('grade,c.class_id')
             ->paginate($param['pageSize'])->toArray();
-print_r($result);die;
-        $courseInfo = Course::column('course_name','course_id');
-        $courseStr = '';
-        foreach ($result['data'] as $k => $v) {
-            if (strpos($v['courseId'], ',') !== false) {
-                $courseArr = explode(',', $v['courseId']);
-                foreach ($courseArr as $vv) {
-                    $courseStr .= $courseInfo[$vv] . '、';
-                }
-                $courseStr = mb_substr($courseStr, 0, -1);
-            } else
-                $courseStr .= $courseInfo[$v['courseId']];
 
-            $result['data'][$k]['course'] = $courseStr;
-            $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
+        foreach ($result['data'] as $k => $v) {
+            if (!empty($v['classId'])) {
+                //查找班主任
+                $where1 = 'is_headmaster = 1 AND FIND_IN_SET('.$v['classId'].',class_id)';
+                $teacher_name = Teacher::where($where1)->value('teacher_name');
+            }
+            $result['data'][$k]['teacherName'] = $teacher_name ?? '';
         }
 
         return $result;
