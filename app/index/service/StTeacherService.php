@@ -13,7 +13,7 @@ use app\common\model\Course;
 use app\common\model\TuanTeacher;
 use app\common\model\Student;
 use app\common\model\RollCall;
-
+use app\common\model\Message;
 
 /**
  * 社团老师
@@ -76,7 +76,7 @@ class StTeacherService
     }
 
      /**
-     * 社团老师排课计划
+     * 社团老师所有社团信息
      * @param string $user 社团老师信息
      * @return json
      */
@@ -103,6 +103,38 @@ class StTeacherService
 
         return $courseInfo;
     }
+
+
+    /**
+     * 认领社团操作
+     * @param string $user 社团老师信息; $course_id 课程id  多课程用,号分隔
+     * @return json
+     */
+    public static function claimCourses($user,$course_id)
+    {
+        
+        // $_course_ids_str = $course_id . ',' . $user['course_id'];
+
+        // $_course_ids_arr = explode(',', $_course_ids_str);
+
+        // $course_ids_arr = array_unique(array_filter($_course_ids_arr)); //数组去空，去重
+
+        // $course_ids_str = implode(',', $course_ids_arr);
+
+        // return TuanTeacher::where('user_id',$user['user_id'])->update(['course_id'=>$course_ids_str]);
+       
+        return Message::insert([
+            'school_id' =>'',
+            'teacher_id' =>$user['teacher_id'],
+            'teacher_type' =>2,
+            'teacher_name' =>$user['teacher_name'],
+            'contact' =>$user['mobile'],
+            'status' => 0,
+            'position' => '社团老师',
+            'ids' => str_replace('，',',',$course_id)
+        ]);
+    }
+    
 
 
     /**
