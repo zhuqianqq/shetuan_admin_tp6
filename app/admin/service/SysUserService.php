@@ -76,8 +76,9 @@ class SysUserService
             $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
             $model->where($where);
         }
-        $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType')
-            ->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
+     
+        $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType,enable')
+            ->where($where)->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
         if (empty($res)) {
             return json_ok((object)array());
         }
@@ -122,9 +123,9 @@ class SysUserService
         try {
             if (strpos($sysUserId, ',') !== false) {
 
-                Db::table('sys_user')->where('user_id', 'in', $sysUserId)->update(['enable' => '2']);
+                SysUser::where('user_id', 'in', $sysUserId)->update(['enable' => '2']);
             } else {
-                Db::table('sys_user')->where('user_id', $sysUserId)->update(['enable' => '2']);
+                SysUser::where('user_id', $sysUserId)->save(['enable' => '2']);
             }
         } catch (\Exception $e) {
             BaseModel::rollbackTrans();
