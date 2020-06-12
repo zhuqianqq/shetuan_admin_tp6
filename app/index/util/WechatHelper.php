@@ -19,7 +19,7 @@ class WechatHelper
         $session_key = $res["session_key"];
         $pc = new WXBizDataCrypt ($wechat_config['appid'], $session_key);
         $errCode = $pc->decryptData($encryptedData, $iv, $data);
-        Tools::addLog("wechat", "取得微信授权结果decryptData", $data);
+        Tools::addLog("wechat", "取得微信授权结果decryptData(解密后)", $data);
         Tools::addLog("wechat", "errCode", $errCode);
         if ($errCode == 0) {
             return $data;
