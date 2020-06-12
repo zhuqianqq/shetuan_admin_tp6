@@ -31,29 +31,26 @@ class MessageService
     public static function getMessageList($param)
     {
 
-        $result = Message::field('teacher_name teacherName,contact,status,position,ids,teacher_type')->select();
+        $result = Message::field('id,teacher_name teacherName,contact,status,position,ids,teacher_type')->order('id desc')->select();
         if (empty($result)) {
             return [];
         }
 
         $result = $result->toArray();
-//        print_r($result);die;
-        foreach ($result as $v) {
+        foreach ($result as $k => $v) {
+            $idArr = explode(',', $v['ids']);
             if ($v['teacher_type'] == 1) {
-                $idArr = explode(',', $v['ids']);
-                //$classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
-                $classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
-                print_r($classOrCourseInfo->toArray());die;
+                $classOrCourseInfo = ClassModel::where([['class_id','in', $idArr]])->column('class_name');
             } else {
-                $classOrCourseInfo = Course::field('course_id,course_name')->select($v['ids']);
+                $classOrCourseInfo = Course::where([['course_id','in', $idArr]])->column('course_name');
             }
+
+            $classOrCourseName = count($classOrCourseInfo) ? implode($classOrCourseInfo, '、') : '';
+            $result[$k]['classOrCourseName'] = $classOrCourseName;
         }
 
-
-       /* if (!empty($classOrCourseInfo)) {
-
-        }*/
-        return $result;
+        $count = count($result);
+        return ['count'=>$count, 'list' => $result];
     }
 
 
