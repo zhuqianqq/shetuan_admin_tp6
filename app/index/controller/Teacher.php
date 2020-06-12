@@ -16,11 +16,13 @@ class Teacher extends BaseController
      */
     public function course(Request $request)
     {
+       
         $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
 
         if(!$userInfo){
             return json_error(11104);
         }
+ 
         $courses = TeacherService::course($userInfo);
         $ret_data = [
             'teacher_name' => $userInfo['teacher_name'],
