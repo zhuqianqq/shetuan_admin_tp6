@@ -99,4 +99,27 @@ class StTeacher extends BaseController
         return json_ok($ret_data,0); 
     }
 
+
+    /**
+     * 社团详情接口
+     * @param  Request $request
+     * @return json
+     */
+    public function shetuanDetail(Request $request)
+    {
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
+        $course_id = $request->param('course_id',''); //社团id
+        if(empty($course_id)){
+            return json_error(100,'情传入社团课程id');
+        }
+
+        $shetuan = StTeacherService::shetuanDetail($userInfo,$course_id);
+
+        return json_ok($shetuan,0); 
+    }
+
 }

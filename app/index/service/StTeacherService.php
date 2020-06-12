@@ -180,6 +180,30 @@ class StTeacherService
 
 
     /**
+     * 社团详情接口
+     * @param array $user 社团老师信息
+     * @return array
+     */
+    public static function shetuanDetail($user,$course_id)
+    {
+        $courseInfo = Course::where('status',1)
+                      ->where('course_id',$course_id)
+                      ->find();
+        if(!$courseInfo){
+            return [];
+        }
+
+        $courseInfo['teacher_info'] = TuanTeacher::where('course_id','like','%'.$courseInfo['course_id'].'%')
+            ->field('teacher_name,mobile')
+            ->select();
+
+        return $courseInfo; 
+    }
+    
+
+
+
+    /**
      * 班主任查看课程情况
      * @param string $teacherId 班主任ID
      * @return json

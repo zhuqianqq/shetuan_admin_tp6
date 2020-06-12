@@ -107,7 +107,7 @@ class TeacherService
 
                 $todayCourses[$k2]['course_state'] = 1;
                 $todayCourses[$k2]['course_state_text'] = '课程未开始';
-                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                 $todayCourses[$k2]['yidao'] = 0;
                 $todayCourses[$k2]['weidao'] = 0;
 
@@ -115,7 +115,7 @@ class TeacherService
 
                 $todayCourses[$k2]['course_state'] = 2;
                 $todayCourses[$k2]['course_state_text'] = '课程点名中';
-                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                 $todayCourses[$k2]['yidao'] = 0;
                 $todayCourses[$k2]['weidao'] = 0;
 
@@ -128,7 +128,7 @@ class TeacherService
                             ->whereTime('create_time','today')
                             ->select();
 
-                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
 
                 $yidao = $weidao = 0; //已到人数 请假人数
                 foreach ($rollCall as $k3 => $v3) {
@@ -208,7 +208,7 @@ class TeacherService
   
                         $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
 
-                        $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                        $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
 
                         $rollCall = RollCall::field('course_id,course_name,student_id,student_name,status')
                                     ->where('course_id',$v2['course_id'])
@@ -239,7 +239,7 @@ class TeacherService
                       $todayCourses[$k2]['nums'] = 0;
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
-                      $todayCourses[$k2]['studentList'] = Student::where('course_id','like','%'.$v2['course_id'].'%')
+                      $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
                                                           ->field('student_id,student_num,student_name')
                                                           ->select();
 
@@ -283,13 +283,20 @@ class TeacherService
 
 
       /**
-     * 获取对应老师下的对应学生所报班的ids
-     * @param string $studentId 学生ID
+     * 获取对应老师下的所有学生报团情况列表
+     * @param string $user 老师信息
      * @return json
      */
     public static function studentInfoList($user)
     {
-
+            $studentList = Student::alias('s')
+                           ->leftJoin('st_shetuan st','s.course_id = st.course_id')
+                           ->where('s.class_id',$user['class_id'])
+                           ->where('s.school_id',$user['school_id'])
+                           ->field('s.student_id,s.student_num,s.student_name,s.course_id,st.course_name')
+                           ->select()->toArray();  
+            $studentList['totol_stu'] = count($studentList);          
+            return $studentList;
 
     }
 

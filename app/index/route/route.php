@@ -28,6 +28,8 @@ Route::any('allCourses', 'index/StTeacher/allCourses');
 Route::any('claimCourses', 'index/StTeacher/claimCourses');
 //课程情况列表
 Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
+//课程详情接口
+Route::any('shetuanDetail', 'index/StTeacher/shetuanDetail');
 
 
 
@@ -37,6 +39,9 @@ Route::any('course', 'index/teacher/course');
 
 //老师课程情况列表
 Route::any('courseInfo', 'index/teacher/courseInfo');
+
+//学生报团列表
+Route::any('studentInfoList', 'index/teacher/studentInfoList');
 
 //认领班级列表
 Route::any('allClasses', 'index/teacher/allClasses');

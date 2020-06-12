@@ -72,9 +72,9 @@ class Teacher extends BaseController
             return json_error(11104);
         }
 
-        $courses = TeacherService::studentInfoList($userInfo);
+        $studentsList = TeacherService::studentInfoList($userInfo);
 
-        return json_ok($courses,0); 
+        return json_ok($studentsList,0); 
 
     }
 
