@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\BaseController;
+use app\admin\service\MessageService;
 use think\Request;
 use app\admin\service\SysClassService;
 
@@ -13,14 +14,14 @@ class Message extends BaseController
      * @param  Request $request
      * @return json
      */
-    public function getMessageList(Request $request)
+    public function messageList(Request $request)
     {
         $param = [];
         $param['page'] = input('page', 1);
         $param['pageSize'] = input('pageSize', 10);
         $param['grade'] = input('grade', '', 'int');
         $param['classId'] = input('classId', '', 'int');
-        $resutlt = SysClassService::getSysClassList($param);
+        $resutlt = MessageService::getMessageList($param);
 
         return json_ok($resutlt);
     }

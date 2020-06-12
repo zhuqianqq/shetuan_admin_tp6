@@ -71,3 +71,10 @@ Route::post('studentAddOrUpdate', 'admin/Student/studentAddOrUpdate')->validate(
 Route::get('studentList', 'admin/Student/studentList');
 /****----------学生删除-------------------***/
 Route::post('studentDelete', 'admin/Student/studentDelete');
+
+
+
+/****----------消息列表-------------------***/
+Route::get('messageList', 'admin/message/messageList');
+/****----------消息审核-------------------***/
+Route::post('studentDelete', 'admin/message/checkMessage');

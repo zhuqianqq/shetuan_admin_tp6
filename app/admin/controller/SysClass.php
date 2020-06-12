@@ -19,7 +19,7 @@ class SysClass extends BaseController
         $param['page'] = input('page', 1);
         $param['pageSize'] = input('pageSize', 10);
         $param['grade'] = input('grade', '', 'int');
-        $param['className'] = input('className', '', 'int');
+        $param['className'] = input('className', '', 'string');
         $resutlt = SysClassService::getSysClassList($param);
 
         return json_ok($resutlt);

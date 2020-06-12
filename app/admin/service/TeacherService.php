@@ -3,6 +3,7 @@ declare (strict_types=1);
 namespace app\admin\service;
 
 use app\admin\model\BaseModel;
+use app\common\model\ClassModel;
 use app\common\model\Course;
 use app\admin\MyException;
 use app\common\model\StTeacher;
@@ -43,8 +44,26 @@ class TeacherService
 
         $result = Teacher::alias('t')
             ->where($where, $bind)
-            ->field('teacher_name teacherName,mobile,grade,class_id classId')
+            ->field('teacher_id teacherId,teacher_name teacherName,mobile,grade,class_id classId')
             ->paginate($param['page_size'])->toArray();
+
+        $classInfo = ClassModel::column('class_name','class_id');
+
+        foreach ($result['data'] as $k => $v) {
+            //获取班级名称
+            $classStr = '';
+            if (strpos($v['classId'], ',') !== false) {
+                $classArr = explode(',', $v['classId']);
+                foreach ($classArr as $vv) {
+                    $classStr .= $classInfo[$vv] . '、';
+                }
+                $classStr = mb_substr($classStr, 0, -1);
+            } else
+                $classStr .= $classInfo[$v['classId']];
+
+            $result['data'][$k]['course'] = $classStr;
+
+        }
 
         return $result;
     }
