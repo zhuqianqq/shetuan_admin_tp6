@@ -62,12 +62,12 @@ class SysClassService
 
 
     /**
-     * 获取所有b班级信息
+     * 获取所有班级信息
      * @return array
      */
     public static function classInfo()
     {
-        $res = ClassModel::field('class_id,class_name')->select();
+        $res = ClassModel::where('enable', 1)->field('class_id,class_name')->select();
         if (empty($res)) {
             return [];
         }
@@ -81,7 +81,7 @@ class SysClassService
      */
     public static function getClassByGrade($grade)
     {
-        $res = ClassModel::field('class_id,class_name')->select();
+        $res = ClassModel::where('enable', 1)->field('class_id,class_name')->select();
         if (empty($res)) {
             return [];
         }

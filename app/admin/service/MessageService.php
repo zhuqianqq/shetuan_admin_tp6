@@ -39,11 +39,11 @@ class MessageService
         $result = $result->toArray();
 //        print_r($result);die;
         foreach ($result as $v) {
+            $idArr = explode(',', $v['ids']);
             if ($v['teacher_type'] == 1) {
-                $idArr = explode(',', $v['ids']);
-                //$classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
-                $classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
+                $classOrCourseInfo = ClassModel::where('class_id')->field('class_name')->select($idArr);
                 print_r($classOrCourseInfo->toArray());die;
+
             } else {
                 $classOrCourseInfo = Course::field('course_id,course_name')->select($v['ids']);
             }
