@@ -31,7 +31,7 @@ class MessageService
     public static function getMessageList($param)
     {
 
-        $result = Message::field('id,teacher_name teacherName,contact,status,position,ids,teacher_type')->select();
+        $result = Message::field('id,teacher_name teacherName,contact,status,position,ids,teacher_type')->order('id desc')->select();
         if (empty($result)) {
             return [];
         }
@@ -47,10 +47,10 @@ class MessageService
 
             $classOrCourseName = count($classOrCourseInfo) ? implode($classOrCourseInfo, '、') : '';
             $result[$k]['classOrCourseName'] = $classOrCourseName;
-
         }
 
-        return $result;
+        $count = count($result);
+        return ['count'=>$count, 'list' => $result];
     }
 
 
