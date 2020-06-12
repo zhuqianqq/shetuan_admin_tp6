@@ -95,7 +95,7 @@ class SysClassService
         $teacherInfo = Teacher::where('is_headmaster',1)->column('class_id');
         $str = implode(',', $teacherInfo);
         $classArr = array_unique(explode(',',$str));
-  
+
         $res = $res->toArray();
         foreach ($res as $k => $v) {
             if (in_array($v['class_id'], $classArr)) {

@@ -37,22 +37,19 @@ class MessageService
         }
 
         $result = $result->toArray();
-//        print_r($result);die;
-        foreach ($result as $v) {
+        foreach ($result as $k => $v) {
             $idArr = explode(',', $v['ids']);
             if ($v['teacher_type'] == 1) {
-                $classOrCourseInfo = ClassModel::where('class_id')->field('class_name')->select($idArr);
-                print_r($classOrCourseInfo->toArray());die;
-
+                $classOrCourseInfo = ClassModel::where([['class_id','in', $idArr]])->column('class_name');
             } else {
-                $classOrCourseInfo = Course::field('course_id,course_name')->select($v['ids']);
+                $classOrCourseInfo = Course::where([['course_id','in', $idArr]])->column('course_name');
             }
+            
+            $classOrCourseName = count($classOrCourseInfo) ? implode($classOrCourseInfo, '、') : '';
+            $result[$k]['classOrCourseName'] = $classOrCourseName;
+
         }
 
-
-       /* if (!empty($classOrCourseInfo)) {
-
-        }*/
         return $result;
     }
 
