@@ -14,7 +14,7 @@ use app\traits\ModelTrait;
  */
 class RollCall extends BaseModel
 {
-    protected $table = "st_roll_call";
+    protected $table = "st_roll_call"; 
     
 }
 
