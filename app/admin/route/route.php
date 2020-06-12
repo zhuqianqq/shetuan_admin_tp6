@@ -34,7 +34,8 @@ Route::get('classInfo', 'admin/SysClass/classInfo');
 Route::post('classDelete', 'admin/SysClass/classDelete');
 /****----------班级新增或修改-------------------***/
 Route::post('classAddOrUpdate', 'admin/SysClass/classAddOrUpdate');
-
+/****----------根据年级获取所有没有班主任的班级-------------------***/
+Route::get('getClassByGrade', 'admin/SysClass/getClassByGrade');
 
 
 /****----------课程增加或修改-------------------***/
