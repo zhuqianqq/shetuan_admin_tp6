@@ -176,9 +176,9 @@ class StTeacher extends BaseController
             return json_error(100,'缺少参数');
         }
 
-        $callRollList = StTeacherService::dianMing($userInfo,$data);
+        $res = StTeacherService::dianMing($userInfo,$data);
 
-        return json_ok($callRollList,0); 
+        return json_ok($res,0); 
 
     }
 

@@ -283,9 +283,38 @@ class StTeacherService
      */
     public static function dianMing($user,$data)
     {
-          $student  =  RollCall::where('course_id',$data['course_id'])
+          $student = Student::alias('s')
+                    ->leftJoin('st_shetuan st','s.course_id = st.course_id')
+                    ->field('s.*,st.course_name,st.start_time,st.end_time')
+                    ->where('s.student_id',$data['student_id'])
+                    ->find();
+
+          $isDianMing  =  RollCall::where('course_id',$data['course_id'])
                        ->where('student_id',$data['student_id'])
                        ->whereTime('create_time','today')
-                       ->value('status');
+                       ->find();
+
+          if(!$isDianMing){
+            //新增操作
+            return RollCall::insert([
+                        'school_id' => $student['school_id'],
+                        'course_id' => $data['course_id'],
+                        'course_name' => $student['course_name'],
+                        'student_id' => $student['student_id'],
+                        'student_name' => $student['student_name'],
+                        'student_num' => $student['student_num'],
+                        'start_time' => $student['start_time'],
+                        'end_time' => $student['end_time'],
+                        'status' => $data['state'],
+                        'create_time' => date('Y-m-d H:i:s',time())
+                    ]);
+          }else{
+            //更新操作
+            return RollCall::where('id',$isDianMing['id'])
+                   ->update([
+                        'status' => $data['state'],
+                    ]);
+
+          }
     }
 }
