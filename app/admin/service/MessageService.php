@@ -6,6 +6,8 @@ namespace app\admin\service;
 use app\admin\MyException;
 use app\admin\util\JwtUtil;
 use app\common\model\ClassModel;
+use app\common\model\Message;
+use app\common\model\StTeacher;
 use app\common\model\Student;
 use think\facade\Db;
 use think\facade\Config;
@@ -14,47 +16,30 @@ use app\admin\model\BaseModel;
 use \app\common\model\Teacher;
 
 /**
- * 班级
- * Class SysClassService
+ * 消息
+ * Class MessageService
  * @package app\service
  */
-class SysClassService
+class MessageService
 {
     /**
-     * 班级列表
+     * 消息列表
      * @param array $param 参数数组
      * @return json
      */
-    public static function getSysClassList($param)
+    public static function getMessageList($param)
     {
 
-        $where = '1=1 AND enable=1';
-        $bind = [];
-
-        if (!empty($param['grade'])) {
-            $where .= ' AND grade=:grade';
-            $bind['grade'] = $param['grade'];
+        $result = Message::field('teacher_name teacherName,contact,status,position,ids,teacher_type')->select();
+        if (empty($result)) {
+            return [];
         }
 
-        if (!empty($param['className'])) {
-            $where .= ' AND class_name=:class_name';
-            $bind['class_name'] = $param['className'];
-        }
-
-        $result = ClassModel::alias('c')
-            ->leftJoin(Student::$_table . ' s', 's.class_id=c.class_id')
-            ->where($where, $bind)
-            ->field('c.class_id classId,class_name className,grade,count(student_id) studentNum,grade')
-            ->group('grade,c.class_id')
-            ->paginate($param['pageSize'])->toArray();
-
-        foreach ($result['data'] as $k => $v) {
-            if (!empty($v['classId'])) {
-                //查找班主任
-                $where1 = 'is_headmaster = 1 AND FIND_IN_SET(' . $v['classId'] . ',class_id)';
-                $teacher_name = Teacher::where($where1)->value('teacher_name');
-            }
-            $result['data'][$k]['teacherName'] = $teacher_name ?? '';
+        $result = $result->toArray();
+        if ($result['teacher_type'] == 1) {
+            $classOrSheTuanName = ClassModel::where('class_id=:class_id', ['class_id' => $result['ids']])->value();
+        } else {
+            $classOrSheTuanName = StTeacher::where('course_id=:course_id', ['course_id' => $result['ids']])->value();
         }
 
         return $result;
@@ -67,7 +52,11 @@ class SysClassService
      */
     public static function classInfo()
     {
-        $res = ClassModel::field('class_id,class_name')->select();
+        $res = ClassModel::alias('t')
+            ->leftJoin(Student::$_table . ' s', 's.class_id=c.class_id')
+            ->field('class_id,class_name')
+            ->select();
+
         if (empty($res)) {
             return [];
         }
