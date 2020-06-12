@@ -22,7 +22,7 @@ class Student extends BaseController
         $param['page_size']= input('pageSize',10, 'int');
         $param['classId'] = input('classId', '', 'int');
         $param['grade'] = input('grade', '', 'int');
-        $param['studentInfo'] = input('teacherInfo', '', 'string');
+        $param['studentInfo'] = input('studentInfo', '', 'string');
         $result = StudentService::studentList($param);
 
         return json_ok($result);
