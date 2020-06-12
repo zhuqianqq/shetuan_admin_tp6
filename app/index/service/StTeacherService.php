@@ -227,8 +227,15 @@ class StTeacherService
         }
 
         $courseInfo['teacher_info'] = TuanTeacher::where('course_id','like','%'.$courseInfo['course_id'].'%')
-            ->field('teacher_name,mobile')
-            ->select();
+                                    ->field('teacher_name,mobile')
+                                    ->select();
+
+        $courseInfo['student_list'] = Student::alias('s')
+                                    ->leftJoin('st_class c','s.class_id = c.class_id')
+                                    ->leftJoin('st_teacher t','s.class_id = t.class_id')
+                                    ->where('s.course_id',$course_id)
+                                    ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name,t.mobile')
+                                    ->select()->toArray();  
 
         return $courseInfo; 
     }
