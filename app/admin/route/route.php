@@ -28,6 +28,8 @@ Route::post('sysUserAdd', 'admin/user/sysUserAdd');
 
 /****----------班级列表--------------------***/
 Route::get('sysClassList', 'admin/SysClass/getSysClassList');
+/****----------班级信息--------------------***/
+Route::get('classInfo', 'admin/SysClass/classInfo');
 /****----------班级删除-------------------***/
 Route::post('classDelete', 'admin/SysClass/classDelete');
 /****----------班级新增或修改-------------------***/

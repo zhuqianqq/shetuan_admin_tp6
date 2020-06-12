@@ -76,6 +76,20 @@ print_r($result);die;
 
 
     /**
+     * 获取所有b班级信息
+     * @return array
+     */
+    public static function classInfo()
+    {
+        $res = ClassModel::column('class_name','class_id');
+        if (empty($res)) {
+            return [];
+        }
+
+        return $res;
+    }
+
+    /**
      * 班级新增或删除
      * @return json
      */

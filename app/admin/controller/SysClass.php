@@ -24,6 +24,14 @@ class SysClass extends BaseController
         return SysClassService::getSysClassList($param);
     }
 
+    /**
+     * 课程
+     */
+    public function classInfo()
+    {
+        $result = SysClassService::classInfo();
+        return json_ok($result);
+    }
 
     /**
      * 增加或修改社团老师

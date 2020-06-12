@@ -61,7 +61,6 @@ class TeacherService
                     $courseStr .= $courseInfo[$v['courseId']];
             }
 
-
             $result['data'][$k]['course'] = $courseStr;
             $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
         }
@@ -120,7 +119,4 @@ class TeacherService
 
         return (object)[];
     }
-
-
-
 }
