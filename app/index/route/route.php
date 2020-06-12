@@ -30,7 +30,8 @@ Route::any('claimCourses', 'index/StTeacher/claimCourses');
 Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
 //课程详情接口
 Route::any('shetuanDetail', 'index/StTeacher/shetuanDetail');
-
+//点名列表接口
+Route::any('callRollList', 'index/StTeacher/callRollList');
 
 
 /******** 班主任课程情况&缺省 *******/
