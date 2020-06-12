@@ -234,7 +234,7 @@ class StTeacherService
                                     ->leftJoin('st_class c','s.class_id = c.class_id')
                                     ->leftJoin('st_teacher t','s.class_id = t.class_id')
                                     ->where('s.course_id',$course_id)
-                                    ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name,t.mobile')
+                                    ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name,t.mobile,t.teacher_name')
                                     ->select()->toArray();  
 
         return $courseInfo; 
@@ -276,4 +276,16 @@ class StTeacherService
     }
 
 
+    /**
+     * 社团老师进行学生点名操作 
+     * @param array $user 社团老师信息 
+     * @return array
+     */
+    public static function dianMing($user,$data)
+    {
+          $student  =  RollCall::where('course_id',$data['course_id'])
+                       ->where('student_id',$data['student_id'])
+                       ->whereTime('create_time','today')
+                       ->value('status');
+    }
 }

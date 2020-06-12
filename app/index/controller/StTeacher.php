@@ -155,4 +155,31 @@ class StTeacher extends BaseController
         return json_ok($callRollList,0); 
     }
 
+    /**
+     * 社团老师进行学生点名操作 
+     * @param  Request $request
+     * @return json
+     */
+    public  function dianMing(Request $request)
+    {
+        $userInfo = TuanTeacher::where('user_id',$request->st_user['user_id'])->find();
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
+        $data = [];
+        $data['course_id'] = $request->param('course_id',''); //社团id
+        $data['student_id'] = $request->param('student_id',''); //学生id
+        $data['state'] = $request->param('state',''); //状态  1-未到   2-已到   3-请假
+
+        if(!$data['course_id'] || !$data['student_id'] || !$data['state']){
+            return json_error(100,'缺少参数');
+        }
+
+        $callRollList = StTeacherService::dianMing($userInfo,$data);
+
+        return json_ok($callRollList,0); 
+
+    }
+
 }
