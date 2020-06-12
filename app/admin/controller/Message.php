@@ -31,7 +31,13 @@ class Message extends BaseController
      */
     public function checkMessage()
     {
-        $result = SysClassService::classInfo();
+        $data['id'] = input('id', '', 'int');
+        $data['status'] = input('status', '', 'int');
+        if (!$data['id'] || !$data['id']) {
+            json_error(10001);
+        }
+        $result = MessageService::checkMessage($data);
+
         return json_ok($result);
     }
 

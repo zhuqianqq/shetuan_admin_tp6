@@ -78,4 +78,4 @@ Route::post('studentDelete', 'admin/Student/studentDelete');
 /****----------消息列表-------------------***/
 Route::get('messageList', 'admin/message/messageList');
 /****----------消息审核-------------------***/
-Route::post('studentDelete', 'admin/message/checkMessage');
+Route::post('checkMessage', 'admin/message/checkMessage');
