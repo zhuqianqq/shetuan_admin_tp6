@@ -26,13 +26,17 @@ Route::any('schedule', 'index/StTeacher/schedule');
 Route::any('allCourses', 'index/StTeacher/allCourses');
 //认领社团
 Route::any('claimCourses', 'index/StTeacher/claimCourses');
-
-
 //课程情况列表
 Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
 
+
+
 /******** 班主任课程情况&缺省 *******/
+//老师首页
 Route::any('course', 'index/teacher/course');
+
+//老师课程情况列表
+Route::any('courseInfo', 'index/teacher/courseInfo');
 
 //认领班级列表
 Route::any('allClasses', 'index/teacher/allClasses');

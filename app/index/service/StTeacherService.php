@@ -130,7 +130,7 @@ class StTeacherService
                       ->field('course_id,course_name,start_time,end_time,class_place,weeks')
                       ->where('status',1)
                       ->where('end_time', '<', $nowTime)
-                      ->order('course_id','desc')->select()->toArray();
+                      ->order('end_time','asc')->select()->toArray();
         }
         
         if(!$courseInfo){
