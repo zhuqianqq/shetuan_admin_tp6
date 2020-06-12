@@ -227,8 +227,15 @@ class StTeacherService
         }
 
         $courseInfo['teacher_info'] = TuanTeacher::where('course_id','like','%'.$courseInfo['course_id'].'%')
-            ->field('teacher_name,mobile')
-            ->select();
+                                    ->field('teacher_name,mobile')
+                                    ->select();
+
+        $courseInfo['student_list'] = Student::alias('s')
+                                    ->leftJoin('st_class c','s.class_id = c.class_id')
+                                    ->leftJoin('st_teacher t','s.class_id = t.class_id')
+                                    ->where('s.course_id',$course_id)
+                                    ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name,t.mobile,t.teacher_name')
+                                    ->select()->toArray();  
 
         return $courseInfo; 
     }
@@ -269,4 +276,45 @@ class StTeacherService
     }
 
 
+    /**
+     * 社团老师进行学生点名操作 
+     * @param array $user 社团老师信息 
+     * @return array
+     */
+    public static function dianMing($user,$data)
+    {
+          $student = Student::alias('s')
+                    ->leftJoin('st_shetuan st','s.course_id = st.course_id')
+                    ->field('s.*,st.course_name,st.start_time,st.end_time')
+                    ->where('s.student_id',$data['student_id'])
+                    ->find();
+
+          $isDianMing  =  RollCall::where('course_id',$data['course_id'])
+                       ->where('student_id',$data['student_id'])
+                       ->whereTime('create_time','today')
+                       ->find();
+
+          if(!$isDianMing){
+            //新增操作
+            return RollCall::insert([
+                        'school_id' => $student['school_id'],
+                        'course_id' => $data['course_id'],
+                        'course_name' => $student['course_name'],
+                        'student_id' => $student['student_id'],
+                        'student_name' => $student['student_name'],
+                        'student_num' => $student['student_num'],
+                        'start_time' => $student['start_time'],
+                        'end_time' => $student['end_time'],
+                        'status' => $data['state'],
+                        'create_time' => date('Y-m-d H:i:s',time())
+                    ]);
+          }else{
+            //更新操作
+            return RollCall::where('id',$isDianMing['id'])
+                   ->update([
+                        'status' => $data['state'],
+                    ]);
+
+          }
+    }
 }

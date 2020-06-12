@@ -32,7 +32,8 @@ Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
 Route::any('shetuanDetail', 'index/StTeacher/shetuanDetail');
 //点名列表接口
 Route::any('callRollList', 'index/StTeacher/callRollList');
-
+//点名操作
+Route::any('dianMing', 'index/StTeacher/dianMing');
 
 /******** 班主任课程情况&缺省 *******/
 //老师首页
