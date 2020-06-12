@@ -26,40 +26,6 @@ class UserService
 {
 
     /**
-     * @param $userId
-     * @return array|null|\think\Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public static function getUserById($userId)
-    {
-        if (!$userId) throw new MyException(10002);
-        $oneUser = User::where('user_id = :user_id', ['user_id' => $userId])->find();
-        return $oneUser;
-    }
-
-    /**
-     * 获取用户信息
-     */
-    public static function getUserInfo($userId)
-    {
-        $table_user = User::$_table;
-        $table_user_detail = UserDetails::$_table;
-        $oneUser = Db::name($table_user)
-            ->alias('u')
-            ->field("u.nick_name nickName,u.status, u.head_image headImage, u.sex, u.autograph, u.birthday, u.data_page dataPage, u.sida_num sidaNum, u.last_login_time lastLoginTime,ud.fuse,ud.tixing, ud.xijie, ud.fengge, ud.shengao, ud.tizhong,ud.nianling,ud.zhiye, ud.zhiwei, ud.aihao")
-            ->join("$table_user_detail ud", "u.user_id = ud.user_id", 'left')
-            ->where(['u.user_id' => $userId])->find();
-        if (!$oneUser) {
-            throw new MyException(10004);
-        }
-        
-        return $data;
-    }
-
-
-    /**
      * 小程序手机号码检测
      */
     public static function loginByMinWechatPhone($data)

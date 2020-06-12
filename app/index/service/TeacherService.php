@@ -282,6 +282,20 @@ class TeacherService
     }
 
 
+      /**
+     * 获取对应老师下的对应学生所报班的ids
+     * @param string $studentId 学生ID
+     * @return json
+     */
+    public static function studentInfoList($user)
+    {
+
+
+    }
+
+    
+
+
 
     /**
      * 班主任查看某个学生课程记录详情

@@ -58,7 +58,7 @@ class User extends BaseController
             $iv = $this->request->param("iv", '', "trim");
             $encryptedData = $this->request->param("encryptedData", '', "trim");
             $user_role = $this->request->param("userRole", '');
-
+        
             if (empty($code) || empty($iv) || empty($encryptedData) || empty($user_role)) {
                 throw new MyException(10002);
             }
