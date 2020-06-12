@@ -6,6 +6,7 @@ namespace app\admin\service;
 use app\admin\MyException;
 use app\admin\util\JwtUtil;
 use app\common\model\ClassModel;
+use app\common\model\Course;
 use app\common\model\Message;
 use app\common\model\StTeacher;
 use app\common\model\Student;
@@ -36,12 +37,22 @@ class MessageService
         }
 
         $result = $result->toArray();
-        if ($result['teacher_type'] == 1) {
-            $classOrSheTuanName = ClassModel::where('class_id=:class_id', ['class_id' => $result['ids']])->value();
-        } else {
-            $classOrSheTuanName = StTeacher::where('course_id=:course_id', ['course_id' => $result['ids']])->value();
+//        print_r($result);die;
+        foreach ($result as $v) {
+            if ($v['teacher_type'] == 1) {
+                $idArr = explode(',', $v['ids']);
+                //$classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
+                $classOrCourseInfo = ClassModel::field('class_id,class_name')->select($idArr);
+                print_r($classOrCourseInfo->toArray());die;
+            } else {
+                $classOrCourseInfo = Course::field('course_id,course_name')->select($v['ids']);
+            }
         }
 
+
+       /* if (!empty($classOrCourseInfo)) {
+
+        }*/
         return $result;
     }
 

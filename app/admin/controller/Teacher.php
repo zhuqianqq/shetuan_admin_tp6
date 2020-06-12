@@ -35,7 +35,6 @@ class Teacher extends BaseController
     {
         $data['teacher_name'] = input('post.teacherName', '', 'string');
         $data['mobile'] = input('post.mobile', '', 'string');
-        $data['course_id'] = input('post.courseId', '', 'string');
         $data['grade'] = input('post.grade', '', 'string');
         $data['teacherId'] = input('post.teacherId', '', 'string');
         $data['class_id'] = input('post.classId', '', 'string');

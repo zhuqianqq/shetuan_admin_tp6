@@ -34,6 +34,15 @@ class SysClass extends BaseController
         return json_ok($result);
     }
 
+    /**
+     * 根据年级获取所有没有班主任的班级
+     */
+    public function getClassByGrade()
+    {
+        $grade = input('grade', '', 'int');
+        $result = SysClassService::getClassByGrade($grade);
+        return json_ok($result);
+    }
 
 
     /**

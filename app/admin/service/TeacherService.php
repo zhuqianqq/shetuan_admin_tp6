@@ -61,7 +61,7 @@ class TeacherService
             } else
                 $classStr .= $classInfo[$v['classId']];
 
-            $result['data'][$k]['course'] = $classStr;
+            $result['data'][$k]['className'] = $classStr;
 
         }
 

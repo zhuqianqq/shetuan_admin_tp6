@@ -76,6 +76,32 @@ class SysClassService
     }
 
     /**
+     * 根据年级获取所有没有班主任的班级
+     * @return array
+     */
+    public static function getClassByGrade($grade)
+    {
+        $res = ClassModel::field('class_id,class_name')->select();
+        if (empty($res)) {
+            return [];
+        }
+
+        $teacherInfo = Teacher::where('is_headmaster',1)->column('class_id');
+        $str = implode(',', $teacherInfo);
+        $classArr = array_unique(explode(',',$str));
+
+        $res = $res->toArray();
+        foreach ($res as $k => $v) {
+            if (in_array($v['class_id'], $classArr)) {
+                unset($res[$k]);
+            }
+        }
+
+        return array_values($res);
+    }
+
+
+    /**
      * 班级新增或删除
      * @return json
      */
