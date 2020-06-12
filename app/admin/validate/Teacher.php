@@ -17,7 +17,6 @@ class Teacher extends Validate
     protected $rule = [
         'teacherName' => ['require', 'max' => '24'],
         'mobile' => ['require','mobile'],
-        'courseId' => ['require'],
         'grade'   => ['require'],
         'classId'   => ['require'],
     ];
@@ -28,14 +27,13 @@ class Teacher extends Validate
         'teacherName.max'       => '班主任老师名字最多不能超过24个字符',
         'mobile.require' => '手机号必须',
         'mobile.mobile' => '手机号格式错误',
-        'courseId'    => '课程必须选择',
         'classId'    => '班级必须选择',
         'grade'   => '请选择年级',
     ];
 
     //验证场景
     protected $scene = [
-        'save' => ['teacherName', 'mobile', 'courseId', 'grade','classId'],
+        'save' => ['teacherName', 'mobile', 'grade','classId'],
     ];
 
 

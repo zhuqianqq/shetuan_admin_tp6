@@ -70,9 +70,10 @@ class SysUserService
     public static function getSysUserList($param)
     {
 
+        $where = 'enable=1 ';
         $model = Db::table('sys_user')->alias('sy');
         if (!empty($param['condition'])) {
-            $where = 'sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
+            $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
             $model->where($where);
         }
         $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType')
