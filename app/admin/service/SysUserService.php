@@ -76,7 +76,7 @@ class SysUserService
             $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
             $model->where($where);
         }
-     
+
         $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType,enable')
             ->where($where)->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
         if (empty($res)) {

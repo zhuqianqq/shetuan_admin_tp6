@@ -17,7 +17,6 @@ class Teacher extends Validate
     protected $rule = [
         'teacherName' => ['require', 'max' => '24'],
         'mobile' => ['require','mobile'],
-        'grade'   => ['require'],
         'classId'   => ['require'],
     ];
 
@@ -28,12 +27,11 @@ class Teacher extends Validate
         'mobile.require' => '手机号必须',
         'mobile.mobile' => '手机号格式错误',
         'classId'    => '班级必须选择',
-        'grade'   => '请选择年级',
     ];
 
     //验证场景
     protected $scene = [
-        'save' => ['teacherName', 'mobile', 'grade','classId'],
+        'save' => ['teacherName', 'mobile','classId'],
     ];
 
 
