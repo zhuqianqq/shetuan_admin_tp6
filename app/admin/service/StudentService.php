@@ -1,5 +1,6 @@
 <?php
 declare (strict_types=1);
+
 namespace app\admin\service;
 
 use app\admin\model\BaseModel;
@@ -30,8 +31,8 @@ class StudentService
         $where = '1=1 ';
         $bind = [];
 
-        if (!empty($param['teacherInfo'])) {
-            $where .= ' AND (teacher_name like "%'. $param['teacherInfo']. '%" OR mobile like "%'. $param['teacherInfo']. '%" OR user_id like "%'. $param['teacherInfo']. '%")';
+        if (!empty($param['studentInfo'])) {
+            $where .= ' AND (student_num like "%' . $param['studentInfo'] . '%" OR mobile like "%' . $param['studentInfo'] . '%" OR student_name like "%' . $param['studentInfo'] . '%")';
         }
 
 
@@ -63,7 +64,7 @@ class StudentService
     {
 
         if (empty($data['student_id'])) {//新增
-                $student = new Student();
+            $student = new Student();
         } else {
             $student = Student::where('student_id=:student_id', ['student_id' => $data['student_id']])->find();
             if (empty($student)) {
@@ -82,7 +83,7 @@ class StudentService
 
         try {
             $student->save();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             throw new MyException(10001, $e->getMessage());
         }
 
@@ -93,7 +94,8 @@ class StudentService
      * 删除学生
      * @param array $data
      */
-    public static function studentDelete($studentId){
+    public static function studentDelete($studentId)
+    {
         $studentId = Student::find($studentId);
         if (empty($studentId)) {
             throw new MyException(10004);

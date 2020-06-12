@@ -32,12 +32,12 @@ class SysClassService
         $bind = [];
 
         if (!empty($param['grade'])) {
-            $where .= 'grade=:grade';
+            $where .= ' AND grade=:grade';
             $bind['grade'] = $param['grade'];
         }
 
         if (!empty($param['classId'])) {
-            $where .= 'c.class_id=:class_id';
+            $where .= ' AND c.class_id=:class_id';
             $bind['class_id'] = $param['classId'];
         }
 
