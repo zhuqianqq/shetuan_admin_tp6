@@ -11,6 +11,9 @@ use think\facade\Cache;
 use app\index\model\BaseModel;
 use app\common\model\ClassModel;
 use app\common\model\Message;
+use app\common\model\Course;
+use app\common\model\Student;
+use app\common\model\RollCall;
 
 /**
  * 班主任
@@ -63,18 +66,44 @@ class TeacherService
     }
 
 
-
     /**
      * 班主任查看课程情况
-     * @param string $teacherId 班主任ID
+     * @param string $user 用户信息
      * @return json
      */
     public static function course($user)
     {
-       $courseInfo = Course::where('course_id','in',$user['course_id'])
+        //查询数据库中对应老师的学生所报班的ids start
+        $course_ids  = Student::where('class_id',$user['class_id'])
+                ->where('school_id',$user['school_id'])
+                ->Distinct(true)
+                ->column('course_id');
+
+        $course_ids_arr = [];
+
+        foreach ($course_ids as $key => $val) {
+            $temp = [];
+            if(strpos($val, ',') != false){
+                 $temp = explode(',', $val);
+                 foreach ($temp as $key2 => $val2) {
+                     $course_ids_arr[] = $val2;
+                 }
+            }else{
+                $course_ids_arr[] = $val;
+            }
+        }
+
+       $course_ids_arr = array_unique($course_ids_arr);
+       if(!$course_ids_arr){
+            return [];
+       }
+       //end
+        
+       $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->where('status',1)
                       ->whereTime('end_time','>',time())
                       ->select()->order('start_time','asc')->toArray();
+                   
         if(!$courseInfo){
             return [];
         }
@@ -89,10 +118,49 @@ class TeacherService
 
         foreach ($todayCourses as $k2 => $v2) {
             # code...
-            if($v2['start_time']){
+            $startTime = strtotime(date('Y-m-d'). ' ' .$v2['start_time']);
+            //课程状态  1:未开始  2：点名中 3.进行中 
+            if(time()<$startTime-600){
 
+                $todayCourses[$k2]['course_state'] = 1;
+                $todayCourses[$k2]['course_state_text'] = '课程未开始';
+                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                $todayCourses[$k2]['yidao'] = 0;
+                $todayCourses[$k2]['weidao'] = 0;
+
+            }else if(time()>$startTime-600 && time()<$startTime){
+
+                $todayCourses[$k2]['course_state'] = 2;
+                $todayCourses[$k2]['course_state_text'] = '课程点名中';
+                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+                $todayCourses[$k2]['yidao'] = 0;
+                $todayCourses[$k2]['weidao'] = 0;
+
+            }else{
+                //var_dump($todayCourses);die;
+                $todayCourses[$k2]['course_state'] = 3;
+                $todayCourses[$k2]['course_state_text'] = '课程进行中';
+                $rollCall = RollCall::where('course_id',$v2['course_id'])
+                ->whereTime('create_time','today')
+                ->select();
+
+                $todayCourses[$k2]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+
+                $yidao = $weidao = 0; //已到人数 请假人数
+                foreach ($rollCall as $k3 => $v3) {
+                    if($v3['status'] == 2){
+                        $yidao++;
+                    }
+
+                    if($v3['status'] == 3 || $v3['status'] == 1){
+                        $weidao++;
+                    }
+                }
+                $todayCourses[$k2]['yidao'] = $yidao;
+                $todayCourses[$k2]['weidao'] = $weidao;
+                
             }
-            $todayCourses[$k]['nums'] = Student::where('course_id','like','%'.$v2['course_id'].'%')->count();
+            
         }
         return $todayCourses;
 

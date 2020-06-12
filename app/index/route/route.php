@@ -32,7 +32,7 @@ Route::any('claimCourses', 'index/StTeacher/claimCourses');
 Route::any('courseInfoList', 'index/StTeacher/courseInfoList');
 
 /******** 班主任课程情况&缺省 *******/
-Route::get('course', 'index/teacher/course');
+Route::any('course', 'index/teacher/course');
 
 //认领班级列表
 Route::any('allClasses', 'index/teacher/allClasses');
