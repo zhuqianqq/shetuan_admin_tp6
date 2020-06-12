@@ -7,6 +7,7 @@ use app\common\model\Course;
 use app\admin\MyException;
 use app\common\model\StTeacher;
 use app\common\model\SysUser;
+use app\common\model\Teacher;
 use app\common\model\TuanTeacher;
 use app\common\model\User;
 
@@ -40,22 +41,26 @@ class TeacherService
             $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
         }
 
-        $result = StTeacher::alias('t')
+        $result = Teacher::alias('t')
             ->where($where, $bind)
-            ->field('teacher_name teacherName,mobile,grade,course_id courseId')
+            ->field('teacher_name teacherName,mobile,grade,course_id courseId,class_id classId')
             ->paginate($param['page_size'])->toArray();
 
         $courseInfo = Course::column('course_name','course_id');
-        $courseStr = '';
+
         foreach ($result['data'] as $k => $v) {
-            if (strpos($v['courseId'], ',') !== false) {
-                $courseArr = explode(',', $v['courseId']);
-                foreach ($courseArr as $vv) {
-                    $courseStr .= $courseInfo[$vv] . '、';
-                }
-                $courseStr = mb_substr($courseStr, 0, -1);
-            } else
-                $courseStr .= $courseInfo[$v['courseId']];
+            $courseStr = '';
+            if (!empty($v['courseId'])) {
+                if (strpos($v['courseId'], ',') !== false) {
+                    $courseArr = explode(',', $v['courseId']);
+                    foreach ($courseArr as $vv) {
+                        $courseStr .= $courseInfo[$vv] . '、';
+                    }
+                    $courseStr = mb_substr($courseStr, 0, -1);
+                } else
+                    $courseStr .= $courseInfo[$v['courseId']];
+            }
+
 
             $result['data'][$k]['course'] = $courseStr;
             $result['data'][$k]['grade'] = str_replace(',', '、', $v['grade']) . '年级';
@@ -73,28 +78,23 @@ class TeacherService
     {
 
         if (empty($data['teacherId'])) {//新增
-            $stTeach = new StTeacher();
+                $teacher = new Teacher();
         } else {
-            $stTeach = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $data['teacherId']])->find();
-            if (empty($stTeach)) {
+            $teacher = Teacher::where('teacher_id=:teacher_id', ['teacher_id' => $data['teacherId']])->find();
+            if (empty($teacher)) {
                 throw new MyException(10004);
             }
         }
 
-        $courseArr = explode(',', $data['course_id']);
-        $courseInfo = Course::select($courseArr);
-        if (count($courseArr) != count($courseInfo)) {
-            throw new MyException(10004);
-        }
-        $stTeach->user_id = '';
-        $stTeach->head_image = '';
-        $stTeach->teacher_name = $data['teacher_name'];
-        $stTeach->mobile = $data['mobile'];
-        $stTeach->grade = $data['grade'];
-        $stTeach->course_id = $data['course_id'];
+        $teacher->teacher_name = $data['teacher_name'];
+        $teacher->mobile = $data['mobile'];
+        $teacher->grade = $data['grade'];
+        $teacher->class_id = $data['class_id'];
+        $teacher->is_headmaster = 1;
+        $teacher->school_id = 1;
 
         try {
-            $stTeach->save();
+            $teacher->save();
         } catch (\Exception $e){
             throw new MyException(10001, $e->getMessage());
         }
@@ -106,8 +106,8 @@ class TeacherService
      * 删除课程
      * @param array $data
      */
-    public static function stTeacherDelete($teacherId){
-        $oneTeacher = StTeacher::find($teacherId);
+    public static function teacherDelete($teacherId){
+        $oneTeacher = Teacher::find($teacherId);
         if (empty($oneTeacher)) {
             throw new MyException(10004);
         }

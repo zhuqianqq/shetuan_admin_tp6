@@ -14,6 +14,7 @@ use app\traits\ModelTrait;
  */
 class Teacher extends BaseModel
 {
+    protected $pk = 'teacher_id';
     public static $_table = "st_teacher"; 
 }
 

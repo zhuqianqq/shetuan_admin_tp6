@@ -56,8 +56,16 @@ Route::post('stTecherDelete', 'admin/stTeacher/stTecherDelete');
 
 
 /****----------班主任增加或修改-------------------***/
-Route::post('classAddOrUpdate', 'admin/stTeacher/classAddOrUpdate');
+Route::post('teacherAddOrUpdate', 'admin/Teacher/teacherAddOrUpdate')->validate(\app\admin\validate\Teacher::class,'save');
 /****----------班主任老师列表-------------------***/
-Route::get('stTeacherList', 'admin/stTeacher/stTeacherList');
+Route::get('teacherList', 'admin/Teacher/teacherList');
 /****----------班主任老师删除-------------------***/
-Route::post('stTecherDelete', 'admin/stTeacher/stTecherDelete');
+Route::post('techerDelete', 'admin/Teacher/techerDelete');
+
+
+/****----------学生增加或修改-------------------***/
+Route::post('studentAddOrUpdate', 'admin/Student/studentAddOrUpdate')->validate(\app\admin\validate\Student::class,'save');
+/****----------学生列表-------------------***/
+Route::get('studentList', 'admin/Student/studentList');
+/****----------学生删除-------------------***/
+Route::post('studentDelete', 'admin/Student/studentDelete');
