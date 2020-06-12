@@ -43,15 +43,12 @@ class SysClassService
             $where .= ' AND FIND_IN_SET('.$param['courseId'].',course_id)';
         }
 
-        $sql = 'select * from (
-                  select 
-                    '.ClassModel::$_table. ' c 
-                
-                )a';
+
         $result = ClassModel::alias('c')
             ->join(Student::$_table . ' s', 's.class_id=c.class_id')
+            ->join(Student::$_table . ' s', 's.class_id=c.class_id')
             ->where($where, $bind)
-            ->field('teacher_name teacherName,mobile,grade,course_id courseId,sum(student_id) studentNum')
+            ->field('class_name className,mobile,grade,course_id courseId,sum(student_id) studentNum')
             ->group('c.class_id')
             ->paginate($param['pageSize'])->toArray();
 print_r($result);die;
@@ -74,6 +71,20 @@ print_r($result);die;
         return $result;
     }
 
+
+    /**
+     * 获取所有b班级信息
+     * @return array
+     */
+    public static function classInfo()
+    {
+        $res = ClassModel::field('class_id,class_name')->select();
+        if (empty($res)) {
+            return [];
+        }
+
+        return $res;
+    }
 
     /**
      * 班级新增或删除
