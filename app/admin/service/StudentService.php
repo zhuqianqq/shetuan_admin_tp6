@@ -48,7 +48,7 @@ class StudentService
         $result = Student::alias('s')
             ->join(ClassModel::$_table . ' c', 's.class_id=c.class_id')
             ->where($where, $bind)
-            ->field('student_id studentId,student_num studentNum,mobile,student_name studentName,s.class_id classId,parent_name parentName,address,grade,class_name')
+            ->field('student_id studentId,student_num studentNum,mobile,student_name studentName,s.class_id classId,parent_name parentName,address,grade,class_name className')
             ->paginate($param['page_size'])->toArray();
 
         return $result;
@@ -80,7 +80,6 @@ class StudentService
         $student->school_id = 1;
         $student->parent_id = '';
 
-//print_r($student->toArray());die;
         try {
             $student->save();
         } catch (\Exception $e){
