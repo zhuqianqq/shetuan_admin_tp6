@@ -37,7 +37,7 @@ class TeacherService
 
         foreach ($classes as $k => $v) {
             # code...
-            if(strpos($user['class_id'],(string)$v['class_id']) != false){
+            if(strpos($user['class_id'],(string)$v['class_id']) !== false){
                 $classes[$k]['isChecked'] = 1;
             }else{
                 $classes[$k]['isChecked'] = 0;
@@ -94,7 +94,7 @@ class TeacherService
         $todayCourses = [];
         $weekday = date("w", time());
         foreach ($courseInfo as $k => $v) {
-            if(strpos($v['weeks'], $weekday) != false){
+            if(strpos($v['weeks'], $weekday) !== false){
                 $todayCourses[] = $v;
             }
         }
@@ -193,7 +193,7 @@ class TeacherService
         $todayCourses = [];
         $weekday = date("w", time());
         foreach ($courseInfo as $k => $v) {
-            if(strpos($v['weeks'], $weekday) != false){
+            if(strpos($v['weeks'], $weekday) !== false){
                 $todayCourses[] = $v;
             }
         }
@@ -267,7 +267,7 @@ class TeacherService
 
         foreach ($course_ids as $key => $val) {
             $temp = [];
-            if(strpos($val, ',') != false){
+            if(strpos($val, ',') !== false){
                  $temp = explode(',', $val);
                  foreach ($temp as $key2 => $val2) {
                      $course_ids_arr[] = $val2;
@@ -320,7 +320,7 @@ class TeacherService
             $weekday = date("w", time());//今天周几
             $weekday==0 && $weekday=7;//如果是0 改为7
             $next_classday = 0; //确定下次上课为周几 初始为0
-            if(strpos($student['weeks'], $weekday) != false){
+            if(strpos($student['weeks'], $weekday) !== false){
                 $temp_arr = explode(',', $student['weeks']);
                 sort($temp_arr); 
                 foreach ($temp_arr as $k => $v) {
