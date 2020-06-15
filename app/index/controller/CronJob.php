@@ -19,6 +19,11 @@ class CronJob  {
 	const CACHE_KEY = 'DianMingList:';
 
 	public static function DianMingList() {
+
+		$key = self::CACHE_KEY . date('Y-m-d',time());
+		var_dump(Cache::set($key, 1, 7*86400));die; //缓存7天时间
+
+
 		try {
 
 			$weekday = date("w", time());
