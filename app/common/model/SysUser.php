@@ -14,6 +14,7 @@ use app\traits\ModelTrait;
  */
 class SysUser extends BaseModel
 {
+    protected $table = "sys_user";
     public static $_table = "sys_user";
 }
 

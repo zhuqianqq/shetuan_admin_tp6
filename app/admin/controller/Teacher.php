@@ -39,7 +39,6 @@ class Teacher extends BaseController
         $data['teacherId'] = input('post.teacherId', '', 'string');
         $data['class_id'] = input('post.classId', '', 'string');
         $data['grade'] = str_replace('，', ',', $data['grade']);
-        $data['course_id'] = str_replace('，', ',', $data['course_id']);
 
         $result = TeacherService::addOrUpdate($data);
         return json_ok($result);

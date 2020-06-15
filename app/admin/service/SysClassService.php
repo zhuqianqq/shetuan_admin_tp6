@@ -67,7 +67,7 @@ class SysClassService
      */
     public static function classInfo()
     {
-        $res = ClassModel::where('enable', 1)->field('class_id,class_name')->select();
+        $res = ClassModel::where('enable', 1)->field('grade,class_id,class_name')->select();
         if (empty($res)) {
             return [];
         }

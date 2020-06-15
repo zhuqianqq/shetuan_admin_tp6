@@ -31,7 +31,7 @@ class MessageService
     public static function getMessageList($param)
     {
 
-        $result = Message::field('id,teacher_name teacherName,contact,status,position,ids,teacher_type')->order('id desc')->select();
+        $result = Message::field('id,teacher_name teacherName,contact,status,position,ids,teacher_type')->order('status asc,id desc')->select();
         if (empty($result)) {
             return [];
         }

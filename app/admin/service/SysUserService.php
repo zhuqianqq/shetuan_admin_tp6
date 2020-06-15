@@ -6,6 +6,7 @@ namespace app\admin\service;
 
 use app\admin\MyException;
 use app\admin\util\JwtUtil;
+use app\common\model\SysUser;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Cache;
@@ -69,18 +70,20 @@ class SysUserService
     public static function getSysUserList($param)
     {
 
+        $where = 'enable=1 ';
         $model = Db::table('sys_user')->alias('sy');
         if (!empty($param['condition'])) {
-            $where = 'sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
+            $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
             $model->where($where);
         }
-        $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime')
-            ->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
+
+        $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType,enable')
+            ->where($where)->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
         if (empty($res)) {
-            return json_ok((object)array(), 0);
+            return json_ok((object)array());
         }
         $list = ['total' => $res['total'], 'currentPage' => $res['current_page'], 'lastPage' => $res['last_page'], 'data' => $res['data']];
-        return json_ok($list, 0);
+        return json_ok($list);
     }
 
     /**
@@ -105,7 +108,7 @@ class SysUserService
         if (empty($res)) {
             return json_ok((object)array(), 0);
         }
-        return json_ok($res, 200);
+        return json_ok($res);
     }
 
     /**
@@ -120,16 +123,16 @@ class SysUserService
         try {
             if (strpos($sysUserId, ',') !== false) {
 
-                Db::table('sys_user')->where('user_id', 'in', $sysUserId)->update(['enable' => '2']);
+                SysUser::where('user_id', 'in', $sysUserId)->update(['enable' => '2']);
             } else {
-                Db::table('sys_user')->where('user_id', $sysUserId)->update(['enable' => '2']);
+                SysUser::where('user_id', $sysUserId)->save(['enable' => '2']);
             }
         } catch (\Exception $e) {
             BaseModel::rollbackTrans();
-            return json_error(100, $e->getMessage());
+            return json_error(10001, $e->getMessage());
         }
         BaseModel::commitTrans();
-        return json_ok((object)array(), 200);
+        return json_ok((object)array());
     }
 
     /**
@@ -140,38 +143,40 @@ class SysUserService
     public static function sysUserUpdate($param)
     {
 
-
         $isSysUserId = Db::table('sys_user')->alias('sy')->where('user_id', $param['sysUserId'])->find();
         if (empty($isSysUserId)) {
-            return json_error(100, '记录不存在');
+            return json_error(10001, '记录不存在');
         }
-        if($param['nowUserId'] != 1){
+        /*if($param['nowUserId'] != 1){
             if($param['sysUserId'] == $param['nowUserId']){
                 if($isSysUserId['enable'] !=$param['enable']){
-                    return json_error(100, '普通账号无权对自身封禁状态做更改');
+                    return json_error(10001, '普通账号无权对自身封禁状态做更改');
                 }
             }
             if($param['sysUserId'] ==1){
-                return json_error(100, '无权对超级管理员进行操作');
+                return json_error(10001, '无权对超级管理员进行操作');
             }
         }
         if($isSysUserId['account'] != $param['account']){
-            return json_error(100, '登录账号无法修改，请重新提交');
-        }
+            return json_error(10001, '登录账号无法修改，请重新提交');
+        }*/
 
         BaseModel::beginTrans();
         try {
             $data = [];
             $data['user_name'] = $param['userName'];
             $data['enable'] = $param['enable'];
+            $data['account'] = $param['account'];
+            $data['password'] = $param['password'];
             $data['mobile'] = $param['mobile'];
+            $data['user_type'] = $param['userType'];
             if (!empty($param['password'])) {
                 $data['password'] = encrypt_pass($param['password']);
             }
-            Db::name('sys_user')->where('user_id', $param['sysUserId'])->data($data)->update();
+            SysUser::where('user_id', $param['sysUserId'])->data($data)->update();
     } catch (\Exception $e) {
             BaseModel::rollbackTrans();
-            return json_error(100, $e->getMessage());
+            return json_error(10001, $e->getMessage());
         }
         BaseModel::commitTrans();
         return json_ok((object)array(), 200);
@@ -189,7 +194,7 @@ class SysUserService
 
         $isAccount = Db::table('sys_user')->alias('sy')->where('account', $param['account'])->find();
         if ($isAccount && $isAccount['enable'] == 1) {
-            return json_error(100, '账户已存在');
+            return json_error(11109);
         }
         BaseModel::beginTrans();
         try {
@@ -198,15 +203,15 @@ class SysUserService
             $data['user_name'] = $param['userName'];
             $data['password'] = $param['password'] ? encrypt_pass($param['password']) : encrypt_pass('123456');
             $data['mobile'] = $param['mobile'];
-            $data['enable'] = $param['enable'];
-            Db::name('sys_user')->save($data);
+            $data['user_type'] = $param['userType'];
+            $oneUser = new SysUser();
+            $oneUser->save($data);
         } catch (\Exception $e) {
             BaseModel::rollbackTrans();
-            return json_error(100, $e->getMessage());
+            throw new MyException(10001, $e->getMessage());
         }
         BaseModel::commitTrans();
-        return json_ok((object)array(), 200);
-
+        return (object)array();
     }
 
 }

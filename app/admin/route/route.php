@@ -21,7 +21,7 @@ Route::get('sysUserList', 'admin/user/getSysUserList');
 Route::get('sysUserDetails', 'admin/user/sysUserDetails');
 /****----------管理用户修改-------------------***/
 Route::post('sysUserUpdate', 'admin/user/sysUserUpdate');
-/****----------管理用户修改-------------------***/
+/****----------管理用户删除-------------------***/
 Route::post('sysUserDelete', 'admin/user/sysUserDelete');
 /****----------管理用户增加-------------------***/
 Route::post('sysUserAdd', 'admin/user/sysUserAdd');
