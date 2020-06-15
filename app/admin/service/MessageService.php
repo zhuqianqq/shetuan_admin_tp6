@@ -72,10 +72,20 @@ class MessageService
            throw new MyException(10004);
        }
 
+       BaseModel::beginTrans();
        try {
            $oneMessage->status = $data['status'];
            $oneMessage->save();
+
+           $oneStTeacher = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $oneMessage['teacher_id']])->find();
+           $messageIdsArr = explode(',', $oneMessage['ids']);
+           $teacherCourseArr = explode(',', $oneStTeacher['course_id']);
+           $courseIds = implode(',', array_unique(array_merge($messageIdsArr, $teacherCourseArr)));
+           $oneStTeacher->course_id = $courseIds;
+           $oneStTeacher->save();
+           BaseModel::commitTrans();
        } catch (\Exception $e) {
+           BaseModel::rollbackTrans();
            throw new MyException(10001, $e->getMessage());
        }
 
