@@ -16,5 +16,9 @@ class Course extends BaseModel
 {
     protected $pk = 'course_id';
     protected $table = "st_shetuan";
+
+    CONST STATUS_UP = 1;//上架
+    CONST STATUS_DOWN = 0;//上架
+
 }
 
