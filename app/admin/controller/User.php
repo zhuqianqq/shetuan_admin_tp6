@@ -95,11 +95,14 @@ class User extends BaseController
      */
     public function editPassWordById(Request $request)
     {
-        print_r($this->request->st_user);die;
-        $user_id = $request->user_id;
-        print_r($user_id);die;
+        $data['user_id'] = $this->request->st_user['user_id'];
+        $data['password'] = input('password', '', 'string');
+        if (empty($data['sysUserId']) || empty($data['password'])) {
+            return json_error(10002);
+        }
 
-        $userId = $this->request->st_user;
+        $res = SysUserService::updatePassword($data);
+        return json_ok($res);
     }
 
     /**
@@ -120,7 +123,7 @@ class User extends BaseController
         $param['userType'] = $request->param('userType');//角色
 
         if (empty($param['sysUserId'])) {
-            return json_error(10001);
+            return json_error(10002);
         }
         return SysUserService::sysUserUpdate($param);
     }
