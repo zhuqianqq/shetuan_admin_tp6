@@ -183,7 +183,7 @@ class TeacherService
             $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->field('course_id,course_name,start_time,end_time,class_place,weeks')
                       ->where('status',1)
-                      ->where('end_time', '<', $nowTime)
+                      ->where('start_time', '>', $nowTime)
                       ->order('end_time','asc')->select()->toArray();
         }
 

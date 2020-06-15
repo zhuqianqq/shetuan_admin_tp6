@@ -61,3 +61,8 @@ Route::any('studentInfoDetail', 'index/teacher/studentInfoDetail');
 /******** 班主任查看某个学生课程记录详情*******/
 Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
 
+
+/******** 生成每天的点名表(定时任务)*******/
+Route::any('createDianMingList', 'index/CronJob/DianMingList');
+
+
