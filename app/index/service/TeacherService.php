@@ -58,7 +58,7 @@ class TeacherService
        $class_id_arr = explode(',', $class_id);
        $hasTeacher = Teacher::where('class_id','in',$class_id_arr)->count();
        if($hasTeacher){
-            throw new MyException(100,'该班级已被认领!');
+            throw new MyException(100,'班级已被认领!');
        }
 
        return Message::insert([
@@ -89,10 +89,10 @@ class TeacherService
             return [];
        }
        //end
-        
+       $nowTime = date('H:i:s',time()); 
        $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->where('status',1)
-                      ->whereTime('end_time','>',time())
+                      ->where('end_time','>',$nowTime)
                       ->select()->order('start_time','asc')->toArray();
                    
         if(!$courseInfo){
