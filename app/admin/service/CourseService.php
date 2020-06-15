@@ -105,6 +105,8 @@ class CourseService
             throw new MyException(10004);
         }
 
+
+
         try {
             $oneCourse->delete();
         } catch (\Exception $e) {
