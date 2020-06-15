@@ -392,6 +392,21 @@ class TeacherService
         return true;
 
     }
+
+
+    /**
+     * 给学生请假
+     * @param string $user 老师信息 $student_id 学生id
+     * @return json
+     */
+    public static function askForLeave($user,$student_id)
+    {  
+
+         return RollCall::where('student_id',$student_id)
+                ->whereTime('create_time','today')
+                ->update(['status'=>3]);
+    }
+    
    
 
 
