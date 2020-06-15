@@ -79,22 +79,29 @@ class Teacher extends BaseController
     }
 
 
+    /**
+     * 具体学生的上课情况
+     * @param  Request $request
+     * @return json
+     */
+    public function studentInfoDetail(Request $request)
+    {
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
 
-    // /**
-    //  * 班主任查看某个学生课程记录详情
-    //  * @param  Request $request
-    //  * @return json
-    //  */
-    // public function courseByStudentDetails(Request $request)
-    // {
-    //     $studentId = $request->param('studentId');
+        if(!$userInfo){
+            return json_error(11104);
+        }
 
-    //     if(empty($studentId)){
-    //         return json_error(100,'请传入学生ID');
-    //     }
+        $student_id = $request->param('student_id',''); //学生id
+        if(empty($student_id)){
+            return json_error(100,'请传入学生id');
+        }
 
-    //     return TeacherService::courseByStudentDetails($studentId);
-    // }
+        $info = TeacherService::studentInfoDetail($userInfo,$student_id);
+
+        return json_ok($info,0); 
+
+    }
 
 
     /**
@@ -148,4 +155,27 @@ class Teacher extends BaseController
 
         return json_ok(TeacherService::claimClass($userInfo,$class_id),0);
     }
+
+      /**
+     * 学生报团操作
+     * @param  Request $request
+     * @return json
+     */
+    public function attendCourse(Request $request)
+    {
+        $course_id = $request->param('course_id',''); //课程id
+        if(empty($course_id)){
+            return json_error(100,'请传入课程id');
+        }
+
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
+
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
+        return json_ok(TeacherService::attendCourse($userInfo,$course_id),0);
+        
+    }
+
 }

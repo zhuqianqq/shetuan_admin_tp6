@@ -301,25 +301,85 @@ class TeacherService
     }
 
     
+     /**
+     * 具体学生的上课情况
+     * @param string $user 老师信息
+     * @return json
+     */
+    public static function studentInfoDetail($user,$student_id)
+    {
+            $student = Student::alias('s')
+                       ->leftJoin('st_shetuan st','s.course_id = st.course_id')
+                       ->where('s.student_id',$student_id)
+                       ->field('s.student_id,s.student_num,s.school_id,s.student_name,s.course_id,st.course_name,st.course_type,st.class_place,st.weeks,st.start_time,st.end_time')
+                       ->find();
 
+            $student['teacher_info'] = TuanTeacher::where('course_id','like','%'.$student['course_id'].'%')->column('teacher_name,mobile');
+            
+            //下节课逻辑 start
+            $weekday = date("w", time());//今天周几
+            $weekday==0 && $weekday=7;//如果是0 改为7
+            $next_classday = 0; //确定下次上课为周几 初始为0
+            if(strpos($student['weeks'], $weekday) != false){
+                $temp_arr = explode(',', $student['weeks']);
+                sort($temp_arr); 
+                foreach ($temp_arr as $k => $v) {
+                    if($v>$weekday){
+                        $next_classday = $v;
+                        break;
+                    }
+                }
+                if($next_classday == 0){
+                    $next_classday = $temp_arr[0];
+                }
+            }else{
+                $next_classday = $student['weeks'];
+            }
+
+            $week_str_arr = [
+                '1'=>'Monday',
+                '2'=>'Tuesday',
+                '3'=>'Wednesday',
+                '4'=>'Thursday',
+                '5'=>'Friday',
+                '6'=>'Saturday',
+                '7'=>'Sunday',
+            ];
+            //如果下次上课大于今天周几,则下次上课时间在本周
+            if($next_classday>$weekday){
+                $day_str = 'this ' .  $week_str_arr[$next_classday];
+                $student['next_class_day'] = date("Y-m-d",strtotime($day_str));
+
+            }else{
+            //下次上课在下周
+                $day_str = 'next ' .  $week_str_arr[$next_classday];
+                $student['next_class_day'] = date("Y-m-d",strtotime($day_str));
+            }
+            //下节课逻辑 end
+
+
+            $beforeRecord = RollCall::field('course_id,course_name,student_id,student_name,status,start_time,end_time,create_time')
+                        ->where('course_id',$student['course_id'])
+                        ->where('school_id',$student['school_id'])
+                        ->select();
+
+            $student['beforeRecord'] = $beforeRecord;
+            
+            return $student;
+    }
 
 
     /**
-     * 班主任查看某个学生课程记录详情
-     * @param string $studentId 学生ID
+     * 学生报团操作
+     * @param string $user 老师信息 $course_id 课程id
      * @return json
      */
-    public static function courseByStudentDetails($studentId)
+    public static function attendCourse($user,$course_id)
     {
-        //查看学生对应的社团信息
 
-        $info = Db::table('st_student')->alias('sst')->leftJoin('st_shetuan ssh','sst.course_id = ssh.course_id')
-            ->field('sst.student_name as studentName,sst.student_num as studentNum,ssh.course_name as courseName,ssh.course_type as courseType,ssh.class_place as classPlace,ssh.start_time as startTime,ssh.weeks,ssh.course_id as courseId')
-            ->where('sst.student_id',$studentId)->find();
 
-        $info['data'] = Db::table('st_roll_call')->where('student_id',$studentId)->where('course_id',$info['courseId'])->order('create_time','desc')->select()->toArray();
-        return json_ok($info, 0);
     }
+   
 
 
 }

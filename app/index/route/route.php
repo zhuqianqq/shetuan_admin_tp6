@@ -51,6 +51,9 @@ Route::any('allClasses', 'index/teacher/allClasses');
 //认领班级操作
 Route::any('claimClass', 'index/teacher/claimClass');
 
+//具体学生的上课情况
+Route::any('studentInfoDetail', 'index/teacher/studentInfoDetail');
+
 
 /******** 班主任查看某个学生课程记录详情*******/
 Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
