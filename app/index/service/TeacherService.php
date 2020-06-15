@@ -407,6 +407,29 @@ class TeacherService
                 ->update(['status'=>3]);
     }
     
+
+    /**
+     * 所有社团课程
+     * @return json
+     */
+    public static function allSheTuanCourses()
+    {  
+        $courseInfo = Course::where('status',1)
+                      ->field('course_id,course_name')
+                      ->order('course_id','desc')->select()->toArray();
+        if(!$courseInfo){
+            return [];
+        }
+
+        foreach ($courseInfo as $k => $v) {
+            $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->column('teacher_name');
+            $courseInfo[$k]['teacher_name'] = implode($teacher_name, ',');
+            $courseInfo[$k]['nums'] = Student::where('course_id',$v['course_id'])->count();
+        }
+
+        return $courseInfo;
+
+    }
    
 
 

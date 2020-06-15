@@ -202,4 +202,15 @@ class Teacher extends BaseController
         return json_ok(TeacherService::askForLeave($userInfo,$student_id),0);
     }
 
+
+    /**
+     * 所有社团课程
+     * @param  Request $request
+     * @return json
+     */
+    public function allSheTuanCourses(Request $request)
+    {   
+        return json_ok(TeacherService::allSheTuanCourses(),0);
+    }
+
 }

@@ -60,6 +60,10 @@ Route::any('studentInfoDetail', 'index/teacher/studentInfoDetail');
 //老师帮学生请假接口
 Route::any('askForLeave', 'index/teacher/askForLeave');
 
+//所有社团课程
+Route::any('allSheTuanCourses', 'index/teacher/allSheTuanCourses');
+
+
 /******** 班主任查看某个学生课程记录详情*******/
 Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
 
