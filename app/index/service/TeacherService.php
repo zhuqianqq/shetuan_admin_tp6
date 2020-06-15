@@ -55,7 +55,8 @@ class TeacherService
      */
     public static function claimClass($user,$class_id)
     {
-       $hasTeacher = Teacher::where('class_id','like','%'.$class_id.'%')->count();
+       $class_id_arr = explode(',', $class_id);
+       $hasTeacher = Teacher::where('class_id','in',$class_id_arr)->count();
        if($hasTeacher){
             throw new MyException(100,'该班级已被认领!');
        }
@@ -302,7 +303,7 @@ class TeacherService
     public static function studentInfoList($user)
     {
             $classInfo = ClassModel::where('class_id','in',$user['class_id'])
-                         ->field('class_id,class_name,school_id')
+                         ->field('class_id,class_name,school_id,grade')
                          ->select()->toArray();
             if(!$classInfo){
                 return [];
