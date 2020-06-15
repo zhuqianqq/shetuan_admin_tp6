@@ -241,6 +241,8 @@ class TeacherService
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
                       $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
+                                                          ->where('class_id','like','%'.$user['class_id'].'%')
+                                                          ->where('school_id',$user['school_id'])
                                                           ->field('student_id,student_num,student_name')
                                                           ->select();
 
