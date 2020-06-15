@@ -5,6 +5,7 @@ namespace app\admin\service;
 use app\admin\model\BaseModel;
 use app\common\model\Course;
 use app\admin\MyException;
+use app\common\model\StTeacher;
 
 /**
  * 课程
@@ -105,7 +106,16 @@ class CourseService
             throw new MyException(10004);
         }
 
+        //未下架不允许删除
+        if ($oneCourse->status == Course::STATUS_UP) {
+            throw new MyException(10015);
+        }
 
+        //有老师选择的课程不能删除
+        $hasCourse = StTeacher::where('course_id=:course_id', ['course_id' => $coursId])->find();
+        if (!empty($hasCourse)) {
+            throw new MyException(10016);
+        }
 
         try {
             $oneCourse->delete();
