@@ -37,7 +37,11 @@ class MessageService
         }
 
         $result = $result->toArray();
+        $count = 0;
         foreach ($result as $k => $v) {
+            if ($v['status'] === 0) {
+                $count += 1;
+            }
             $idArr = explode(',', $v['ids']);
             if ($v['teacher_type'] == 1) {
                 $classOrCourseInfo = ClassModel::where([['class_id','in', $idArr]])->column('class_name');
@@ -49,7 +53,6 @@ class MessageService
             $result[$k]['classOrCourseName'] = $classOrCourseName;
         }
 
-        $count = count($result);
         return ['count'=>$count, 'list' => $result];
     }
 

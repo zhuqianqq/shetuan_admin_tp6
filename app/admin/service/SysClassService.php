@@ -106,6 +106,16 @@ class SysClassService
         return array_values($res);
     }
 
+    /**
+     * 根据班级id获取年级
+     * @param $classId 班级id
+     */
+    public static function getGradeByClass($classId)
+    {
+        $res = ClassModel::where('class_id=:class_id', ['class_id' => $classId])->field('class_id classId,class_name className,grade,enable')->find();
+        return $res;
+    }
+
 
     /**
      * 班级新增或删除
