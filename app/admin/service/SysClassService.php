@@ -79,7 +79,7 @@ class SysClassService
      * 根据年级获取所有没有班主任的班级
      * @return array
      */
-    public static function getClassByGrade($grade, $classId = '')
+    public static function getClassByGrade($grade, $classId = '', $teacherId = '')
     {
         $where = 'enable=:enable';
         $bind['enable'] = 1;
@@ -92,13 +92,20 @@ class SysClassService
             return [];
         }
 
-        $teacherInfo = Teacher::where('is_headmaster',1)->column('class_id');
+        $teacherInfo = Teacher::where('is_headmaster',1)->column('class_id','teacher_id');
         $str = implode(',', $teacherInfo);
+
+        //当前班主任对应的班级
+        $currentTeacherClass = explode(',', $teacherInfo[$teacherId]);
+
         $classArr = array_unique(explode(',',$str));
 
         $res = $res->toArray();
         foreach ($res as $k => $v) {
-            if ($classId && $v['class_id'] == $classId) {
+           /* if (($classId && $v['class_id'] == $classId) && ($teacherId && $v['teacher_id'] == $teacherId)) {
+                continue;
+            }*/
+            if (in_array($v['class_id'], $currentTeacherClass)) {
                 continue;
             }
             if (in_array($v['class_id'], $classArr)) {
