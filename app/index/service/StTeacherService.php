@@ -32,10 +32,12 @@ class StTeacherService
      */
     public static function index($user)
     {  
+        $nowTime = date('H:i:s',time());
         $courseInfo = Course::where('course_id','in',$user['course_id'])
                       ->where('status',1)
-                      ->whereTime('end_time','>',time())
+                      ->where('end_time','>',$nowTime)
                       ->select()->order('start_time','asc')->toArray();
+                
         if(!$courseInfo){
             return [];
         }
