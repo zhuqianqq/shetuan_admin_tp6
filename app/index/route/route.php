@@ -72,3 +72,7 @@ Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
 Route::any('createDianMingList', 'index/CronJob/DianMingList');
 
 
+Route::any('/', 'index/user/loginByMinWechatPhone');
+
+
+
