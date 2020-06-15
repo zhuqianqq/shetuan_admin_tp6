@@ -42,6 +42,7 @@ class StTeacherService
 
         $todayCourses = [];
         $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
 
         foreach ($courseInfo as $k => $v) {
             if(strpos($v['weeks'], $weekday) !== false){
@@ -174,6 +175,7 @@ class StTeacherService
 
         $todayCourses = [];
         $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
         foreach ($courseInfo as $k => $v) {
             if(strpos($v['weeks'], $weekday) !== false){
                 $todayCourses[] = $v;

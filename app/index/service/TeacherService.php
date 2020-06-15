@@ -94,6 +94,7 @@ class TeacherService
 
         $todayCourses = [];
         $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
         foreach ($courseInfo as $k => $v) {
             if(strpos($v['weeks'], $weekday) !== false){
                 $todayCourses[] = $v;
@@ -193,6 +194,7 @@ class TeacherService
 
         $todayCourses = [];
         $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
         foreach ($courseInfo as $k => $v) {
             if(strpos($v['weeks'], $weekday) !== false){
                 $todayCourses[] = $v;
@@ -263,6 +265,7 @@ class TeacherService
     {
         $course_ids  = Student::where('class_id',$user['class_id'])
                 ->where('school_id',$user['school_id'])
+                ->where('course_id','exp','is not null')
                 ->Distinct(true)
                 ->column('course_id');
 
