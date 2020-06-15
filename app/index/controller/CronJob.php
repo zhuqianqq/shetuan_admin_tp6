@@ -20,9 +20,8 @@ class CronJob  {
 
 	public static function DianMingList() {
 
-		$key = self::CACHE_KEY . date('Y-m-d',time());
-		var_dump(Cache::set($key, 1, 7*86400));var_dump(Cache::get($key));die; //缓存7天时间
-
+		//$key = self::CACHE_KEY . date('Y-m-d',time());
+		//var_dump(Cache::set($key, 1, 7*86400));var_dump(Cache::get($key));die; //缓存7天时间
 
 		try {
 
