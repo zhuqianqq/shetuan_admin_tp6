@@ -19,7 +19,7 @@ return [
     // app接口加密安全key
     'app_sign_key'          => '#l_vle_ll_e%+$^@0608)[@***###',
     //用户登录有效期
-    'user_login_time'       => 60 * 60 * 24 * 7,
+    'user_login_time'       => 60 * 60 * 24 * 8,
 
     //小程序配置
     'wechat_mini'           => [

@@ -137,6 +137,26 @@ class SysUserService
     }
 
     /**
+     * 修改密码
+     * @param $param
+     * @return \json
+     */
+    public static function updatePassword($param)
+    {
+        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
+        if (empty($isSysUserId)) {
+            return json_error(10001);
+        }
+        try {
+            $isSysUserId->password = md5($param['password']);
+            $isSysUserId->save();
+        } catch (\Exception $e) {
+            return json_error(10001, $e->getMessage());
+        }
+        return json_ok((object)array(), 200);
+    }
+
+    /**
      * 管理员编辑
      * @param array $param 参数数组
      * @return json
@@ -168,7 +188,7 @@ class SysUserService
             $data['user_name'] = $param['userName'];
             $data['enable'] = $param['enable'];
             $data['account'] = $param['account'];
-            $data['password'] = $param['password'];
+            $data['password'] = md5($param['password']);
             $data['mobile'] = $param['mobile'];
             $data['user_type'] = $param['userType'];
             if (!empty($param['password'])) {
