@@ -93,6 +93,17 @@ class User extends BaseController
      * @param  Request $request
      * @return json
      */
+    public function editPassWordById()
+    {
+        print_r($this->request->st_user);die;
+        $userId = $this->request->st_user;
+    }
+
+    /**
+     * 管理用户修改
+     * @param  Request $request
+     * @return json
+     */
     public function sysUserUpdate(Request $request)
     {
         $param = [];

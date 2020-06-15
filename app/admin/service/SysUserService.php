@@ -45,6 +45,7 @@ class SysUserService
         $user_token            = think_encrypt(JwtUtil::encode($user));
         $userLoginTime = Config::get('system.user_login_time');
         Cache::set('ACCESS_TOKEN:'.$user['user_id'], $user_token, $userLoginTime);
+
         // 数据处理和令牌获取
 
         return array('user_token' => $user_token, 'account' => $user['account'], 'userName' => $user['user_name'], 'id' =>$user['user_id']);
@@ -104,7 +105,7 @@ class SysUserService
      */
     public static function sysUserDetails($sysUserId)
     {
-        $res = Db::table('sys_user')->alias('sy')->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.enable,sy.create_time as createTime')->where('user_id',$sysUserId)->find();
+        $res = SysUser::alias('sy')->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.enable,sy.create_time as createTime,password pwd')->where('user_id',$sysUserId)->find();
         if (empty($res)) {
             return json_ok((object)array(), 0);
         }
@@ -143,7 +144,7 @@ class SysUserService
     public static function sysUserUpdate($param)
     {
 
-        $isSysUserId = Db::table('sys_user')->alias('sy')->where('user_id', $param['sysUserId'])->find();
+        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
         if (empty($isSysUserId)) {
             return json_error(10001, '记录不存在');
         }
@@ -192,7 +193,7 @@ class SysUserService
     public static function sysUserAdd($param)
     {
 
-        $isAccount = Db::table('sys_user')->alias('sy')->where('account', $param['account'])->find();
+        $isAccount = SysUser::alias('sy')->where('account', $param['account'])->find();
         if ($isAccount && $isAccount['enable'] == 1) {
             return json_error(11109);
         }
