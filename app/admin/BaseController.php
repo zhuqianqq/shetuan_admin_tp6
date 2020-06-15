@@ -3,6 +3,7 @@ declare (strict_types = 1);
 
 namespace app\admin;
 
+use app\index\util\ErrorCode;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;
@@ -91,13 +92,13 @@ abstract class BaseController
                 throw new \app\admin\MyException(11101);
             }
             $authKey = 'ACCESS_TOKEN:'. $payload->user_id;
-
             $isLogout = Cache::get($authKey);
+           // print_r($isLogout);die;
             if (!$isLogout) {
                 throw new \app\admin\MyException(11102);
             }
 
-
+echo $payload->login_time;die;
             //用户登录有效期
             $userLoginTime = sysConfig::get('system.user_login_time');
             if (strtotime($payload->login_time) < time() - $userLoginTime) {

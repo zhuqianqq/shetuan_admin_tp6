@@ -40,8 +40,9 @@ class SysClass extends BaseController
     public function getClassByGrade()
     {
         $grade = input('grade', '', 'int');
+        $classId = input('classId', '', 'int');
         if (!$grade) return json_error(10002);
-        $result = SysClassService::getClassByGrade($grade);
+        $result = SysClassService::getClassByGrade($grade, $classId);
         return json_ok($result);
     }
 
