@@ -99,7 +99,8 @@ class StTeacherService
             $teacher_name = TuanTeacher::where('course_id','like','%'.$v['course_id'].'%')->column('teacher_name');
             $courseInfo[$k]['teacher_name'] = implode($teacher_name, ',');
             $courseInfo[$k]['nums'] = Student::where('course_id',$v['course_id'])->count();
-            if(strpos($user['course_id'],(string)$v['course_id']) !== false){
+            
+            if($user['course_id'] && strpos($user['course_id'],(string)$v['course_id']) !== false){
                 $courseInfo[$k]['isChecked'] = 1;
             }else{
                 $courseInfo[$k]['isChecked'] = 0;
