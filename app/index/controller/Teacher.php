@@ -28,7 +28,7 @@ class Teacher extends BaseController
             'teacher_name' => $userInfo['teacher_name'],
             'head_image' => $userInfo['head_image'],
             'courses' => $courses,
-            'today' => date('Y-m-d',time())
+            'today' => date('Y/m/d',time())
         ];
         return json_ok($ret_data,0);
     }
