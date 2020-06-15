@@ -166,7 +166,8 @@ class SysUserService
             $data = [];
             $data['user_name'] = $param['userName'];
             $data['enable'] = $param['enable'];
-            $data['mobile'] = $param['mobile'];
+            $data['account'] = $param['account'];
+            $data['password'] = $param['password'];
             $data['mobile'] = $param['mobile'];
             $data['user_type'] = $param['userType'];
             if (!empty($param['password'])) {
