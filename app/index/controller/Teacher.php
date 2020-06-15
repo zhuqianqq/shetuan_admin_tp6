@@ -180,4 +180,26 @@ class Teacher extends BaseController
 
     }
 
+
+    /**
+     * 给学生请假
+     * @param  Request $request
+     * @return json
+     */
+    public function askForLeave(Request $request)
+    {   
+        $student_id = $request->param('student_id',''); //学生id
+        if(empty($student_id)){
+            return json_error(100,'请传入学生id');
+        }
+
+        $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
+
+        if(!$userInfo){
+            return json_error(11104);
+        }
+
+        return json_ok(TeacherService::askForLeave($userInfo,$student_id),0);
+    }
+
 }

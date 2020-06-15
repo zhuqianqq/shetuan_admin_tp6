@@ -57,6 +57,8 @@ Route::any('claimClass', 'index/teacher/claimClass');
 //具体学生的上课情况
 Route::any('studentInfoDetail', 'index/teacher/studentInfoDetail');
 
+//老师帮学生请假接口
+Route::any('askForLeave', 'index/teacher/askForLeave');
 
 /******** 班主任查看某个学生课程记录详情*******/
 Route::get('courseByStudentDetails', 'index/teacher/courseByStudentDetails');
