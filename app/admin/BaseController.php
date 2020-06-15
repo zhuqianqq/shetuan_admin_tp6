@@ -93,6 +93,7 @@ abstract class BaseController
             }
             $authKey = 'ACCESS_TOKEN:'. $payload->user_id;
             $isLogout = Cache::get($authKey);
+            print_r($isLogout);die;
             if (!$isLogout) {
                 throw new \app\admin\MyException(11102);
             }

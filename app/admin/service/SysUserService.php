@@ -44,6 +44,8 @@ class SysUserService
         // 令牌生成
         $user_token            = think_encrypt(JwtUtil::encode($user));
         $userLoginTime = Config::get('system.user_login_time');
+//        $redis = \think\facade\Cache::handler();
+//        Cache::set('name11111', 'ouyang', $userLoginTime);
         Cache::set('ACCESS_TOKEN:'.$user['user_id'], $user_token, $userLoginTime);
 
         // 数据处理和令牌获取
@@ -143,7 +145,7 @@ class SysUserService
      */
     public static function updatePassword($param)
     {
-        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
+        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['user_id'])->find();
         if (empty($isSysUserId)) {
             return json_error(10001);
         }
