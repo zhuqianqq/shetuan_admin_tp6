@@ -79,7 +79,7 @@ class SysClassService
      * 根据年级获取所有没有班主任的班级
      * @return array
      */
-    public static function getClassByGrade($grade, $classId = '')
+    public static function getClassByGrade($grade, $classId = '', $teacherId = '')
     {
         $where = 'enable=:enable';
         $bind['enable'] = 1;
@@ -98,7 +98,7 @@ class SysClassService
 
         $res = $res->toArray();
         foreach ($res as $k => $v) {
-            if ($classId && $v['class_id'] == $classId) {
+            if (($classId && $v['class_id'] == $classId) && ($teacherId && $v['teacher_id'] == $teacherId)) {
                 continue;
             }
             if (in_array($v['class_id'], $classArr)) {
