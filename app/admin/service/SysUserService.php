@@ -44,6 +44,8 @@ class SysUserService
         // 令牌生成
         $user_token            = think_encrypt(JwtUtil::encode($user));
         $userLoginTime = Config::get('system.user_login_time');
+//        $redis = \think\facade\Cache::handler();
+//        Cache::set('name11111', 'ouyang', $userLoginTime);
         Cache::set('ACCESS_TOKEN:'.$user['user_id'], $user_token, $userLoginTime);
 
         // 数据处理和令牌获取
@@ -143,12 +145,12 @@ class SysUserService
      */
     public static function updatePassword($param)
     {
-        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
+        $isSysUserId = SysUser::alias('sy')->where('user_id', $param['user_id'])->find();
         if (empty($isSysUserId)) {
             return json_error(10001);
         }
         try {
-            $isSysUserId->password = md5($param['password']);
+            $isSysUserId->password = encrypt_pass($param['password']);
             $isSysUserId->save();
         } catch (\Exception $e) {
             return json_error(10001, $e->getMessage());
@@ -189,7 +191,6 @@ class SysUserService
             $data['user_name'] = $param['userName'];
             $data['enable'] = $param['enable'];
             $data['account'] = $param['account'];
-            $data['password'] = md5($param['password']);
             $data['mobile'] = $param['mobile'];
             $data['user_type'] = $param['userType'];
             if (!empty($param['password'])) {
