@@ -150,7 +150,7 @@ class SysUserService
             return json_error(10001);
         }
         try {
-            $isSysUserId->password = md5($param['password']);
+            $isSysUserId->password = encrypt_pass($param['password']);
             $isSysUserId->save();
         } catch (\Exception $e) {
             return json_error(10001, $e->getMessage());
@@ -191,7 +191,6 @@ class SysUserService
             $data['user_name'] = $param['userName'];
             $data['enable'] = $param['enable'];
             $data['account'] = $param['account'];
-            $data['password'] = md5($param['password']);
             $data['mobile'] = $param['mobile'];
             $data['user_type'] = $param['userType'];
             if (!empty($param['password'])) {
