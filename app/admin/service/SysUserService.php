@@ -109,6 +109,7 @@ class SysUserService
         if (empty($res)) {
             return json_ok((object)array(), 0);
         }
+        $res['pwd'] = think_decrypt($res['pwd']);
         return json_ok($res);
     }
 

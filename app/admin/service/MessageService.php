@@ -78,8 +78,14 @@ class MessageService
            $oneMessage->save();
 
            $oneStTeacher = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $oneMessage['teacher_id']])->find();
+           if (empty($oneStTeacher)) {
+               throw new MyException(10004);
+           }
            $messageIdsArr = explode(',', $oneMessage['ids']);
-           $teacherCourseArr = explode(',', $oneStTeacher['course_id']);
+           if ($oneStTeacher['course_id']) {
+               $teacherCourseArr = explode(',', $oneStTeacher['course_id']);
+           } else
+               $teacherCourseArr = [];
            $courseIds = implode(',', array_unique(array_merge($messageIdsArr, $teacherCourseArr)));
            $oneStTeacher->course_id = $courseIds;
            $oneStTeacher->save();
