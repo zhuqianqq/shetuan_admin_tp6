@@ -301,14 +301,23 @@ class TeacherService
      */
     public static function studentInfoList($user)
     {
-            $studentList = Student::alias('s')
-                           ->leftJoin('st_shetuan st','s.course_id = st.course_id')
-                           ->where('s.class_id',$user['class_id'])
-                           ->where('s.school_id',$user['school_id'])
-                           ->field('s.student_id,s.student_num,s.student_name,s.course_id,st.course_name')
-                           ->select()->toArray();  
-            
-            return $studentList;
+            $classInfo = ClassModel::where('class_id','in',$user['class_id'])
+                         ->field('class_id,class_name,school_id')
+                         ->select()->toArray();
+            if(!$classInfo){
+                return [];
+            }
+            foreach ($classInfo as $k => $v) {
+               
+                $classInfo[$k]['student_list'] =  Student::alias('s')
+                                               ->leftJoin('st_shetuan st','s.course_id = st.course_id')
+                                               ->where('s.class_id',$v['class_id'])
+                                               ->where('s.school_id',$v['school_id'])
+                                               ->field('s.student_id,s.student_num,s.student_name,s.course_id,st.course_name')
+                                               ->select()->toArray();
+            }
+
+            return $classInfo;
 
     }
 
