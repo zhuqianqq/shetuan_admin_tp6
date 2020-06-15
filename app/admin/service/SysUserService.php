@@ -153,7 +153,7 @@ class SysUserService
         } catch (\Exception $e) {
             return json_error(10001, $e->getMessage());
         }
-        
+
         return (object)array();
     }
 

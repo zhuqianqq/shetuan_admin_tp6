@@ -97,7 +97,7 @@ class User extends BaseController
     {
         $data['user_id'] = $this->request->st_user['user_id'];
         $data['password'] = input('password', '', 'string');
-        if (empty($data['sysUserId']) || empty($data['password'])) {
+        if (empty($data['user_id']) || empty($data['password'])) {
             return json_error(10002);
         }
 
