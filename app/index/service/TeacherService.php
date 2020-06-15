@@ -13,6 +13,7 @@ use app\common\model\ClassModel;
 use app\common\model\Message;
 use app\common\model\Course;
 use app\common\model\Student;
+use app\common\model\Teacher;
 use app\common\model\RollCall;
 use app\common\model\TuanTeacher;
 use app\index\MyException;
@@ -54,6 +55,11 @@ class TeacherService
      */
     public static function claimClass($user,$class_id)
     {
+       $hasTeacher = Teacher::where('class_id','like','%'.$class_id.'%')->count();
+       if($hasTeacher){
+            throw new MyException(100,'该班级已被认领!');
+       }
+
        return Message::insert([
             'school_id' =>$user['school_id'],
             'teacher_id' =>$user['teacher_id'],
@@ -301,7 +307,7 @@ class TeacherService
                            ->where('s.school_id',$user['school_id'])
                            ->field('s.student_id,s.student_num,s.student_name,s.course_id,st.course_name')
                            ->select()->toArray();  
-            $studentList['totol_stu'] = count($studentList);          
+            
             return $studentList;
 
     }
