@@ -93,9 +93,12 @@ class User extends BaseController
      * @param  Request $request
      * @return json
      */
-    public function editPassWordById()
+    public function editPassWordById(Request $request)
     {
         print_r($this->request->st_user);die;
+        $user_id = $request->user_id;
+        print_r($user_id);die;
+
         $userId = $this->request->st_user;
     }
 

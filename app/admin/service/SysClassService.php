@@ -97,7 +97,6 @@ class SysClassService
         $classArr = array_unique(explode(',',$str));
 
         $res = $res->toArray();
-
         foreach ($res as $k => $v) {
             if ($classId && $v['class_id'] == $classId) {
                 continue;
@@ -106,7 +105,7 @@ class SysClassService
                 unset($res[$k]);
             }
         }
-        
+
         return array_values($res);
     }
 

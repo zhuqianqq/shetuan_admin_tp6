@@ -7,6 +7,6 @@ return [
     // \think\middleware\LoadLangPack::class,
     // Session初始化
     // \think\middleware\SessionInit::class
-   // app\admin\middleware\CheckAdminUser::class
+    //app\admin\middleware\CheckAdminUser::class,
     think\middleware\AllowCrossDomain::class
 ];
