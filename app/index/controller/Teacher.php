@@ -162,10 +162,12 @@ class Teacher extends BaseController
      * @return json
      */
     public function attendCourse(Request $request)
-    {
-        $course_id = $request->param('course_id',''); //课程id
-        if(empty($course_id)){
-            return json_error(100,'请传入课程id');
+    {   
+        
+        $data = $request->param('data',''); //json数组参数 [{"student_id":"1","course_id":"3"},{"student_id":"8","course_id":"10"}]
+        
+        if(!$data){
+            return json_error(100,'缺少参数！');
         }
 
         $userInfo = TModel::where('user_id',$request->st_user['user_id'])->find();
@@ -174,8 +176,8 @@ class Teacher extends BaseController
             return json_error(11104);
         }
 
-        return json_ok(TeacherService::attendCourse($userInfo,$course_id),0);
-        
+        return json_ok(TeacherService::attendCourse($userInfo,$data),0);
+
     }
 
 }

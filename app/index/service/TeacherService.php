@@ -15,6 +15,7 @@ use app\common\model\Course;
 use app\common\model\Student;
 use app\common\model\RollCall;
 use app\common\model\TuanTeacher;
+use app\index\MyException;
 
 /**
  * 班主任
@@ -374,9 +375,16 @@ class TeacherService
      * @param string $user 老师信息 $course_id 课程id
      * @return json
      */
-    public static function attendCourse($user,$course_id)
-    {
+    public static function attendCourse($user,$_data)
+    {   
+        $data = json_decode($_data,true);
 
+        foreach ($data as $k => $v) {
+            # code...
+             Student::where('student_id',$v['student_id'])->update(['course_id'=>$v['course_id']]);
+        }
+
+        return true;
 
     }
    

@@ -48,6 +48,9 @@ Route::any('studentInfoList', 'index/teacher/studentInfoList');
 //认领班级列表
 Route::any('allClasses', 'index/teacher/allClasses');
 
+//学生报团操作
+Route::any('attendCourse', 'index/teacher/attendCourse');
+
 //认领班级操作
 Route::any('claimClass', 'index/teacher/claimClass');
 
