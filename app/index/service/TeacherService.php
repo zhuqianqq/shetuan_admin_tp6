@@ -270,12 +270,12 @@ class TeacherService
      */
     public static function getClassIds($user)
     {
-        $course_ids  = Student::where('class_id',$user['class_id'])
+        $course_ids  = Student::where('class_id','in',$user['class_id'])
                 ->where('school_id',$user['school_id'])
                 ->where('course_id','exp','is not null')
                 ->Distinct(true)
                 ->column('course_id');
-
+       
         $course_ids_arr = [];
 
         foreach ($course_ids as $key => $val) {
