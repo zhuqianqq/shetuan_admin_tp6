@@ -171,7 +171,7 @@ class TeacherService
 
         //查询数据库中对应老师的学生所报班的ids start
         $course_ids_arr = self::getClassIds($user);
-        
+       
         if(!$course_ids_arr){
             return [];
         }
@@ -194,7 +194,7 @@ class TeacherService
                       ->order('end_time','asc')->select()->toArray();
         }
 
-                   
+             
         if(!$courseInfo){
             return [];
         }
@@ -246,15 +246,15 @@ class TeacherService
 
                       $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
                       $todayCourses[$k2]['rollCall'] = [];
-                      $todayCourses[$k2]['nums'] = 0;
+                      $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
                       $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
-                                                          ->where('class_id','like','%'.$user['class_id'].'%')
+                                                          ->where('class_id','in', $user['class_id'])
                                                           ->where('school_id',$user['school_id'])
                                                           ->field('student_id,student_num,student_name')
                                                           ->select();
-
+                                                    
                 }
 
                 
@@ -270,12 +270,12 @@ class TeacherService
      */
     public static function getClassIds($user)
     {
-        $course_ids  = Student::where('class_id',$user['class_id'])
+        $course_ids  = Student::where('class_id','in',$user['class_id'])
                 ->where('school_id',$user['school_id'])
                 ->where('course_id','exp','is not null')
                 ->Distinct(true)
                 ->column('course_id');
-
+       
         $course_ids_arr = [];
 
         foreach ($course_ids as $key => $val) {
