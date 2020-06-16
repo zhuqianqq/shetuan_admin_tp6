@@ -147,14 +147,22 @@ class SysClassService
 
 
     /**
-     * 班级新增或删除
+     * 班级新增或修改
      * @return json
      */
     public static function addOrUpdate($data)
     {
         if (empty($data['class_id'])) {//新增
+            $oneClass = ClassModel::where('grade=:grade and class_name=:class_name', ['grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
+            if (!empty($oneClass)) {
+                throw new MyException(10017);
+            }
             $class = new ClassModel();
         } else {
+            $oneClass = ClassModel::where('class_id!=:class_id and grade=:grade and class_name=:class_name', ['class_id' => $data['class_id'], 'grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
+            if (!empty($oneClass)) {
+                throw new MyException(10017);
+            }
             $class = ClassModel::where('class_id=:class_id', ['class_id' => $data['class_id']])->find();
             if (empty($class)) {
                 throw new MyException(10004);
