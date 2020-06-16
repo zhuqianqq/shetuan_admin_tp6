@@ -70,35 +70,5 @@ class User extends BaseController
             return json_ok($userData, 0);
     }
 
-    /**
-     * 用户详情
-     */
-    public function userDetail()
-    {
-        // todo redis
-        $user = $this->request->dani_user;
-        if (empty($user)) {
-            throw new \app\MyException(10004);
-        }
-        $userId = $user['user_id'];
-        if (empty($userId)) {
-            throw new \app\MyException(10004);
-        }
-        $userInfo = UserService::getUserInfo($userId);
-        return json_ok($userInfo, 0);
-    }
-
-    /**
-     * 退出登录
-     */
-    public function loginOut()
-    {
-        $user = $this->request->dani_user;
-        if (empty($user)) {
-            throw new \app\MyException(10004);
-        }
-        $cacheKey = config('cachekeys.acc_key') . $user['user_id'];
-        Cache::set($cacheKey, 1);
-        return json_ok((object)[], 0);
-    }
+   
 }
