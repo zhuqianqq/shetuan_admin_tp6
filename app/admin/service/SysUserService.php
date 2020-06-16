@@ -73,13 +73,14 @@ class SysUserService
 
         $where = 'enable=1 ';
         $model = Db::table('sys_user')->alias('sy');
+        $model->where($where);
         if (!empty($param['condition'])) {
-            $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
+            $where .= ' AND (sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%")';
             $model->where($where);
         }
 
         $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType,enable')
-            ->where($where)->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
+            ->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
         if (empty($res)) {
             return json_ok((object)array());
         }
@@ -109,7 +110,7 @@ class SysUserService
         if (empty($res)) {
             return json_ok((object)array(), 0);
         }
-        $res['pwd'] = think_decrypt($res['pwd']);
+
         return json_ok($res);
     }
 
@@ -168,7 +169,7 @@ class SysUserService
 
         $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
         if (empty($isSysUserId)) {
-            return json_error(10001, '记录不存在');
+            return json_error(10004);
         }
         /*if($param['nowUserId'] != 1){
             if($param['sysUserId'] == $param['nowUserId']){
@@ -184,6 +185,16 @@ class SysUserService
             return json_error(10001, '登录账号无法修改，请重新提交');
         }*/
 
+        //手机号和账号唯一验证
+        $isExistAccount = SysUser::where('user_id !=:user_id and account=:account', ['user_id' => $isSysUserId['user_id'], 'account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('user_id !=:user_id and mobile=:mobile', ['user_id' => $isSysUserId['user_id'], 'mobile' => $param['mobile']])->find();
+        if (!empty($isExistAccount)) {
+            throw new MyException(11110);
+        }
+        if (!empty($isExistMobile)) {
+            throw new MyException(11111);
+        }
+
         BaseModel::beginTrans();
         try {
             $data = [];
@@ -198,10 +209,10 @@ class SysUserService
             SysUser::where('user_id', $param['sysUserId'])->data($data)->update();
     } catch (\Exception $e) {
             BaseModel::rollbackTrans();
-            return json_error(10001, $e->getMessage());
+            throw new MyException(10001, $e->getMessage());
         }
         BaseModel::commitTrans();
-        return json_ok((object)array(), 200);
+        return (object)array();
 
 
     }
@@ -216,8 +227,19 @@ class SysUserService
 
         $isAccount = SysUser::alias('sy')->where('account', $param['account'])->find();
         if ($isAccount && $isAccount['enable'] == 1) {
-            return json_error(11109);
+            throw new MyException(11109);
         }
+
+        //手机号和账号唯一验证
+        $isExistAccount = SysUser::where('account=:account', ['account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('mobile=:mobile', ['mobile' => $param['mobile']])->find();
+        if (!empty($isExistAccount)) {
+            throw new MyException(11110);
+        }
+        if (!empty($isExistMobile)) {
+            throw new MyException(11111);
+        }
+
         BaseModel::beginTrans();
         try {
             $data = [];

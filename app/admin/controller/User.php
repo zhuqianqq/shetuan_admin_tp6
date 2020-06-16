@@ -125,7 +125,7 @@ class User extends BaseController
         if (empty($param['sysUserId'])) {
             return json_error(10002);
         }
-        return SysUserService::sysUserUpdate($param);
+        return json_ok(SysUserService::sysUserUpdate($param));
     }
 
     /**
