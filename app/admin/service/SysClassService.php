@@ -190,6 +190,12 @@ class SysClassService
     public static function sysClassDelete($sysClassId)
     {
 
+        $where = 'is_headmaster = 1 AND FIND_IN_SET(' .$sysClassId . ',class_id)';
+        $hasTeacher = Teacher::where($where)->find();
+        if (!empty($hasTeacher)) {
+            throw new MyException(10018);
+        }
+        
         BaseModel::beginTrans();
         try {
             if (strpos($sysClassId, ',') !== false) {
