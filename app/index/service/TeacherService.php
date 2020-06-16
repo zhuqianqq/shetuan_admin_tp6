@@ -423,7 +423,6 @@ class TeacherService
     public static function attendCourse($user,$_data)
     {   
         $data = json_decode($_data,true);
-
         $weekday = date("w", time());
         $weekday==0 && $weekday=7;//如果是0 改为7
 
@@ -453,7 +452,7 @@ class TeacherService
              }
              //学生报团被修改后  需要同步修改对应的点名表数据 end
         }
-
+        
         return true;
 
     }
