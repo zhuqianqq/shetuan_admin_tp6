@@ -186,8 +186,8 @@ class SysUserService
         }*/
 
         //手机号和账号唯一验证
-        $isExistAccount = SysUser::where('enable=:enable and user_id !=:user_id and account=:account', ['enable' => 1, 'user_id' => $isSysUserId['user_id'], 'account' => $param['account']])->find();
-        $isExistMobile = SysUser::where('enable=:enable and user_id !=:user_id and mobile=:mobile', ['enable' => 1, 'user_id' => $isSysUserId['user_id'], 'mobile' => $param['mobile']])->find();
+        $isExistAccount = SysUser::where('user_id !=:user_id and account=:account', ['user_id' => $isSysUserId['user_id'], 'account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('user_id !=:user_id and mobile=:mobile', ['user_id' => $isSysUserId['user_id'], 'mobile' => $param['mobile']])->find();
         if (!empty($isExistAccount)) {
             throw new MyException(11110);
         }
@@ -231,8 +231,8 @@ class SysUserService
         }
 
         //手机号和账号唯一验证
-        $isExistAccount = SysUser::where('enable=:enable and account=:account', ['enable' => 1, 'account' => $param['account']])->find();
-        $isExistMobile = SysUser::where('enable=:enable and mobile=:mobile', ['enable' => 1, 'mobile' => $param['mobile']])->find();
+        $isExistAccount = SysUser::where('account=:account', ['account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('mobile=:mobile', ['mobile' => $param['mobile']])->find();
         if (!empty($isExistAccount)) {
             throw new MyException(11110);
         }

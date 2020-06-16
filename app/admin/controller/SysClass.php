@@ -40,10 +40,21 @@ class SysClass extends BaseController
     public function getClassByGrade()
     {
         $grade = input('grade', '', 'int');
-        $classId = input('classId', '', 'int');
         $teacherId = input('teacherId', '', 'int');
         if (!$grade) return json_error(10002);
-        $result = SysClassService::getClassByGrade($grade, $classId, $teacherId);
+        $result = SysClassService::getClassByGrade($grade, $teacherId);
+        return json_ok($result);
+    }
+
+
+    /**
+     * 根据年级获取班级
+     */
+    public function getClassByGradeId()
+    {
+        $grade = input('grade', '', 'int');
+        if (!$grade) return json_error(10002);
+        $result = SysClassService::getClassByGradeId($grade);
         return json_ok($result);
     }
 

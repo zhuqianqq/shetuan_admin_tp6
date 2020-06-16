@@ -77,18 +77,30 @@ class MessageService
            $oneMessage->status = $data['status'];
            $oneMessage->save();
 
-           $oneStTeacher = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $oneMessage['teacher_id']])->find();
-           if (empty($oneStTeacher)) {
+           $messageIdsArr = explode(',', $oneMessage['ids']);
+           if ($oneMessage['teacher_type'] == 1) {//学校老师
+               $teacherM = Teacher::where('teacher_id=:teacher_id', ['teacher_id' => $oneMessage['teacher_id']])->find();
+               $doField = $teacherM['class_id'];
+           } else {
+               $teacherM = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $oneMessage['teacher_id']])->find();
+               $doField = $teacherM['course_id'];
+           }
+
+           if (empty($teacherM)) {
                throw new MyException(10004);
            }
-           $messageIdsArr = explode(',', $oneMessage['ids']);
-           if ($oneStTeacher['course_id']) {
-               $teacherCourseArr = explode(',', $oneStTeacher['course_id']);
+
+           if ($doField) {
+               $doArr = explode(',', $doField);
            } else
-               $teacherCourseArr = [];
-           $courseIds = implode(',', array_unique(array_merge($messageIdsArr, $teacherCourseArr)));
-           $oneStTeacher->course_id = $courseIds;
-           $oneStTeacher->save();
+               $doArr = [];
+
+           $doIds = implode(',', array_unique(array_merge($messageIdsArr, $doArr)));
+           if ($oneMessage['teacher_type'] == 1) {
+               $teacherM->class_id = $doIds;
+           } else
+               $teacherM->course_id = $doIds;
+           $teacherM->save();
            BaseModel::commitTrans();
        } catch (\Exception $e) {
            BaseModel::rollbackTrans();
