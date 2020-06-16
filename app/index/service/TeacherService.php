@@ -405,15 +405,39 @@ class TeacherService
     {   
         $data = json_decode($_data,true);
 
+        $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
+
         foreach ($data as $k => $v) {
-            # code...
+             # code...
              Student::where('student_id',$v['student_id'])->update(['course_id'=>$v['course_id']]);
+
+             //学生报团被修改后  需要同步修改对应的点名表数据
+             //判断是否为今天的课程
+             $isTodayCourse = Course::where('status',1)
+                     ->where('weeks','like','%'.$weekday.'%')
+                     ->where('course_id',$v['course_id'])
+                     ->find();
+
+             if($isTodayCourse){
+                        RollCall::where('student_id',$v['student_id'])
+                        ->whereTime('create_time','today')
+                        ->update(
+                            [
+                                'course_id'=> $isTodayCourse['course_id'],
+                                'course_name'=> $isTodayCourse['course_name'],
+                                'start_time'=> $isTodayCourse['start_time'],
+                                'end_time'=> $isTodayCourse['end_time'],
+                                'create_time'=>date('Y-m-d H:i:s',time())
+                            ]
+                        );
+             }
+             //学生报团被修改后  需要同步修改对应的点名表数据 end
         }
 
         return true;
 
     }
-
 
     /**
      * 给学生请假

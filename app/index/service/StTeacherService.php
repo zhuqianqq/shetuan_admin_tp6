@@ -269,7 +269,7 @@ class StTeacherService
                            ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name')
                            ->select()->toArray();  
         foreach ($studentList as $k => $v) {
-            $teacher_info = Teacher::where('class_id','like','%'.$v['class_id'].'%')->column('teacher_name,mobile');
+            $teacher_info = Teacher::where('class_id',$v['class_id'])->column('teacher_name,mobile');
             $studentList[$k]['teacher_info'] = $teacher_info;
             $studentList[$k]['status'] = RollCall::where('course_id',$course_id)
                                         ->where('student_id',$v['student_id'])
