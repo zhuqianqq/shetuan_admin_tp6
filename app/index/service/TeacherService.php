@@ -158,18 +158,18 @@ class TeacherService
 
                 $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
 
-                $yidao = $weidao = 0; //已到人数 请假人数
+                $yidao = $qingjia = $weidao = 0; //已到人数 请假人数 未到人数
                 foreach ($rollCall as $k3 => $v3) {
                     if($v3['status'] == 2){
                         $yidao++;
                     }
 
-                    if($v3['status'] == 3 || $v3['status'] == 1){
-                        $weidao++;
+                    if($v3['status'] == 3){
+                        $qingjia++;
                     }
                 }
                 $todayCourses[$k2]['yidao'] = $yidao;
-                $todayCourses[$k2]['weidao'] = $weidao;
+                $todayCourses[$k2]['weidao'] = $todayCourses[$k2]['nums'] - $qingjia - $yidao;
                 
             }
             
