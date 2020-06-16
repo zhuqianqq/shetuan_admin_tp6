@@ -125,6 +125,7 @@ class TeacherService
             return [];
        }
        //end
+       $dainmingTime = date('H:i:s',time()-10*60);
        $nowTime = date('H:i:s',time()); 
        // $courseInfo = Course::where('course_id','in',$course_ids_arr)
        //                ->where('status',1)
@@ -134,7 +135,7 @@ class TeacherService
        //只返回进行中的课程
        $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->where('status',1)
-                      ->where('start_time','<=',$nowTime)
+                      ->where('start_time','<=',$dainmingTime)
                       ->where('end_time','>',$nowTime)
                       ->select()->order('start_time','asc')->toArray();
                    
