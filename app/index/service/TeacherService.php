@@ -246,7 +246,7 @@ class TeacherService
 
                       $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
                       $todayCourses[$k2]['rollCall'] = [];
-                      $todayCourses[$k2]['nums'] = 0;
+                      $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
                       $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
