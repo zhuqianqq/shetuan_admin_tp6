@@ -55,11 +55,30 @@ class TeacherService
      */
     public static function claimClass($user,$class_id)
     {
-       $class_id_arr = explode(',', $class_id);
-       $hasTeacher = Teacher::where('class_id','in',$class_id_arr)->count();
-       if($hasTeacher){
-            throw new MyException(10077,'班级已被认领!');
+       //判断申请认领的班级是否已被其它班主任认领 start
+       $class_ids_str = '';
+       $class_ids = Teacher::column('class_id');
+     
+       foreach ($class_ids as $k=> $v) {
+           $class_ids_str .=  $v . ',' ;
        }
+       $class_ids_str = substr($class_ids_str,0,strlen($class_ids_str)-1);//去掉最后的','号
+
+       //所有被选了的班级id数组
+       $class_id_arr1 = explode(',', $class_ids_str);
+       //参数传入的认领班级id数组
+       $class_id_arr2 = explode(',', $class_id);
+
+       foreach ($class_id_arr1 as $k1 => $v1) {
+           
+           foreach ($class_id_arr2 as $k2 => $v2) {
+               
+               if( $v1 == $v2 ){
+                     throw new MyException(10077,'班级已被认领!');
+               }
+           }
+       }
+       //判断申请认领的班级是否已被其它班主任认领 end
 
        return Message::insert([
             'school_id' =>$user['school_id'],
