@@ -55,11 +55,30 @@ class TeacherService
      */
     public static function claimClass($user,$class_id)
     {
-       $class_id_arr = explode(',', $class_id);
-       $hasTeacher = Teacher::where('class_id','in',$class_id_arr)->count();
-       if($hasTeacher){
-            throw new MyException(100,'班级已被认领!');
+       //判断申请认领的班级是否已被其它班主任认领 start
+       $class_ids_str = '';
+       $class_ids = Teacher::column('class_id');
+     
+       foreach ($class_ids as $k=> $v) {
+           $class_ids_str .=  $v . ',' ;
        }
+       $class_ids_str = substr($class_ids_str,0,strlen($class_ids_str)-1);//去掉最后的','号
+
+       //所有被选了的班级id数组
+       $class_id_arr1 = explode(',', $class_ids_str);
+       //参数传入的认领班级id数组
+       $class_id_arr2 = explode(',', $class_id);
+
+       foreach ($class_id_arr1 as $k1 => $v1) {
+           
+           foreach ($class_id_arr2 as $k2 => $v2) {
+               
+               if( $v1 == $v2 ){
+                     throw new MyException(10077,'班级已被认领!');
+               }
+           }
+       }
+       //判断申请认领的班级是否已被其它班主任认领 end
 
        return Message::insert([
             'school_id' =>$user['school_id'],
@@ -139,18 +158,18 @@ class TeacherService
 
                 $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
 
-                $yidao = $weidao = 0; //已到人数 请假人数
+                $yidao = $qingjia = $weidao = 0; //已到人数 请假人数 未到人数
                 foreach ($rollCall as $k3 => $v3) {
                     if($v3['status'] == 2){
                         $yidao++;
                     }
 
-                    if($v3['status'] == 3 || $v3['status'] == 1){
-                        $weidao++;
+                    if($v3['status'] == 3){
+                        $qingjia++;
                     }
                 }
                 $todayCourses[$k2]['yidao'] = $yidao;
-                $todayCourses[$k2]['weidao'] = $weidao;
+                $todayCourses[$k2]['weidao'] = $todayCourses[$k2]['nums'] - $qingjia - $yidao;
                 
             }
             
@@ -245,15 +264,20 @@ class TeacherService
                 }else{
 
                       $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
-                      $todayCourses[$k2]['rollCall'] = [];
+                      $todayCourses[$k2]['rollCall'] = RollCall::field('course_id,course_name,student_id,student_name,status')
+                                    ->where('course_id',$v2['course_id'])
+                                    ->where('school_id',$user['school_id'])
+                                    ->whereTime('create_time','today')
+                                    ->select();
                       $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
-                      $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
-                                                          ->where('class_id','in', $user['class_id'])
-                                                          ->where('school_id',$user['school_id'])
-                                                          ->field('student_id,student_num,student_name')
-                                                          ->select();
+                      $todayCourses[$k2]['studentList'] = [];
+                      // $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
+                      //                                     ->where('class_id','in', $user['class_id'])
+                      //                                     ->where('school_id',$user['school_id'])
+                      //                                     ->field('student_id,student_num,student_name')
+                      //                                     ->select();
                                                     
                 }
 
@@ -400,15 +424,39 @@ class TeacherService
     {   
         $data = json_decode($_data,true);
 
+        $weekday = date("w", time());
+        $weekday==0 && $weekday=7;//如果是0 改为7
+
         foreach ($data as $k => $v) {
-            # code...
+             # code...
              Student::where('student_id',$v['student_id'])->update(['course_id'=>$v['course_id']]);
+
+             //学生报团被修改后  需要同步修改对应的点名表数据
+             //判断是否为今天的课程
+             $isTodayCourse = Course::where('status',1)
+                     ->where('weeks','like','%'.$weekday.'%')
+                     ->where('course_id',$v['course_id'])
+                     ->find();
+
+             if($isTodayCourse){
+                        RollCall::where('student_id',$v['student_id'])
+                        ->whereTime('create_time','today')
+                        ->update(
+                            [
+                                'course_id'=> $isTodayCourse['course_id'],
+                                'course_name'=> $isTodayCourse['course_name'],
+                                'start_time'=> $isTodayCourse['start_time'],
+                                'end_time'=> $isTodayCourse['end_time'],
+                                'create_time'=>date('Y-m-d H:i:s',time())
+                            ]
+                        );
+             }
+             //学生报团被修改后  需要同步修改对应的点名表数据 end
         }
 
         return true;
 
     }
-
 
     /**
      * 给学生请假

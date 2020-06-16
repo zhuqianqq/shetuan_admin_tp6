@@ -209,7 +209,7 @@ class StTeacherService
             }
 
             $todayCourses[$k]['qingjiaNums'] = $qingjia;
-            $todayCourses[$k]['weidaoNums'] =$todayCourses[$k]['nums'] - $yidao;
+            $todayCourses[$k]['weidaoNums'] =$todayCourses[$k]['nums'] - $yidao - $qingjia;
             
         }
 
@@ -269,7 +269,21 @@ class StTeacherService
                            ->field('s.student_id,s.student_num,s.student_name,s.course_id,s.class_id,c.class_name')
                            ->select()->toArray();  
         foreach ($studentList as $k => $v) {
-            $teacher_info = Teacher::where('class_id','like','%'.$v['class_id'].'%')->column('teacher_name,mobile');
+
+            $teacher_info = Teacher::where('class_id',$v['class_id'])->column('teacher_name,mobile');
+            //如果学生没有找到老师的情况 则为该老师是多个班级的班主任 按模糊查询再匹配查找
+            if(!$teacher_info){
+                $_teacher_info = Teacher::where('class_id','like','%'.$v['class_id'].'%')->column('teacher_name,mobile,class_id');
+                foreach ($_teacher_info as $k2 => $v2) {
+                    $class_ids = explode(',', $v2['class_id']);
+                    foreach ($class_ids as $k3 => $v3) {
+                        if($v3 == $v['class_id']){
+                            $teacher_info = $v2;
+                            break 2;
+                        }
+                    }
+                }
+            }
             $studentList[$k]['teacher_info'] = $teacher_info;
             $studentList[$k]['status'] = RollCall::where('course_id',$course_id)
                                         ->where('student_id',$v['student_id'])
@@ -320,6 +334,7 @@ class StTeacherService
             return RollCall::where('id',$isDianMing['id'])
                    ->update([
                         'status' => $data['state'],
+                        'create_time' => date('Y-m-d H:i:s',time())
                     ]);
 
           }
