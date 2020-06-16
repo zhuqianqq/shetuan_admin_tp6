@@ -153,13 +153,13 @@ class SysClassService
     public static function addOrUpdate($data)
     {
         if (empty($data['class_id'])) {//新增
-            $oneClass = ClassModel::where('grade=:grade and class_name=:class_name', ['grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
+            $oneClass = ClassModel::where('grade=:grade and class_name=:class_name and enable=1', ['grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
             if (!empty($oneClass)) {
                 throw new MyException(10017);
             }
             $class = new ClassModel();
         } else {
-            $oneClass = ClassModel::where('class_id!=:class_id and grade=:grade and class_name=:class_name', ['class_id' => $data['class_id'], 'grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
+            $oneClass = ClassModel::where('class_id!=:class_id and grade=:grade and class_name=:class_name and enable=1', ['class_id' => $data['class_id'], 'grade' => $data['grade'], 'class_name' => $data['class_name']])->find();
             if (!empty($oneClass)) {
                 throw new MyException(10017);
             }
