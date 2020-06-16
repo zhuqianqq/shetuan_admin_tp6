@@ -73,13 +73,14 @@ class SysUserService
 
         $where = 'enable=1 ';
         $model = Db::table('sys_user')->alias('sy');
+        $model->where($where);
         if (!empty($param['condition'])) {
-            $where .= ' AND sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%"';
+            $where .= ' AND (sy.account like "%' . $param['condition'] . '%" or sy.user_name like "%' . $param['condition'] . '%" or sy.mobile like "%' . $param['condition'] . '%")';
             $model->where($where);
         }
 
         $res = $model->field('sy.user_id as userId,sy.account,sy.user_name as userName,sy.mobile,sy.user_type as userType,sy.school_id as schoolId,sy.create_time as createTime,user_type userType,enable')
-            ->where($where)->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
+            ->paginate(['page' => $param['page'], 'list_rows' => $param['pageSize']])->toArray();
         if (empty($res)) {
             return json_ok((object)array());
         }
@@ -109,7 +110,7 @@ class SysUserService
         if (empty($res)) {
             return json_ok((object)array(), 0);
         }
-        $res['pwd'] = think_decrypt($res['pwd']);
+
         return json_ok($res);
     }
 
@@ -185,8 +186,8 @@ class SysUserService
         }*/
 
         //手机号和账号唯一验证
-        $isExistAccount = SysUser::where('user_id !=:user_id and account=:account', ['user_id' => $isSysUserId, 'account' => $param['account']])->find();
-        $isExistMobile = SysUser::where('user_id !=:user_id and mobile=:mobile', ['user_id' => $isSysUserId, 'mobile' => $param['mobile']])->find();
+        $isExistAccount = SysUser::where('user_id !=:user_id and account=:account', ['user_id' => $isSysUserId['user_id'], 'account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('user_id !=:user_id and mobile=:mobile', ['user_id' => $isSysUserId['user_id'], 'mobile' => $param['mobile']])->find();
         if (!empty($isExistAccount)) {
             throw new MyException(11110);
         }
@@ -238,7 +239,7 @@ class SysUserService
         if (!empty($isExistMobile)) {
             throw new MyException(11111);
         }
-        
+
         BaseModel::beginTrans();
         try {
             $data = [];
