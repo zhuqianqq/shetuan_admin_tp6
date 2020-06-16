@@ -193,7 +193,7 @@ class TeacherService
                     }
                 }
                 $todayCourses[$k2]['yidao'] = $yidao;
-                $todayCourses[$k2]['weidao'] = $todayCourses[$k2]['nums'] - $qingjia - $yidao;
+                $todayCourses[$k2]['weidao'] = abs($todayCourses[$k2]['nums'] - $qingjia - $yidao);
                 
             }
             
