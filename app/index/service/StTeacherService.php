@@ -209,7 +209,7 @@ class StTeacherService
             }
 
             $todayCourses[$k]['qingjiaNums'] = $qingjia;
-            $todayCourses[$k]['weidaoNums'] =$todayCourses[$k]['nums'] - $yidao;
+            $todayCourses[$k]['weidaoNums'] =$todayCourses[$k]['nums'] - $yidao - $qingjia;
             
         }
 
