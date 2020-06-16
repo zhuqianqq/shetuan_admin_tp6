@@ -32,20 +32,37 @@ class TeacherService
      */
     public static function allClasses($user,$grade)
     {
+        //已经认领的班级id start
+        $class_ids_str = '';
+        $class_ids = Teacher::column('class_id');
+     
+        foreach ($class_ids as $k=> $v) {
+            $class_ids_str .=  $v . ',' ;
+        }
+        $class_ids_str = substr($class_ids_str,0,strlen($class_ids_str)-1);//去掉最后的','号
+
+        $class_id_arr = explode(',', $class_ids_str);
+        //已经认领的班级id end
+
         
         $classes = ClassModel::where(['school_id'=>$user['school_id'],'grade'=>$grade,'enable'=>1])
                   ->field('class_id,class_name')
                   ->select()->toArray();
-
+        $return_classes = [];
         foreach ($classes as $k => $v) {
-            # code...
-            if(strpos($user['class_id'],(string)$v['class_id']) !== false){
-                $classes[$k]['isChecked'] = 1;
-            }else{
-                $classes[$k]['isChecked'] = 0;
+            //去除已经被认领的班级
+            foreach ($class_id_arr as $k2 => $v2) {
+                if($v2 == $v['class_id']){
+                    unset($classes[$k]);
+                }
             }
         }
-        return $classes;
+        //去除unset后数组前面的键值
+        foreach ($classes as $k3 => $v3) {
+            $return_classes[] = $v3;
+        }
+        return $return_classes;
+
     }
     
     /**
@@ -452,7 +469,7 @@ class TeacherService
              }
              //学生报团被修改后  需要同步修改对应的点名表数据 end
         }
-        
+
         return true;
 
     }
