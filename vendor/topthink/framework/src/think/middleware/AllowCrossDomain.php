@@ -46,6 +46,7 @@ class AllowCrossDomain
      */
     public function handle($request, Closure $next, ?array $header = [])
     {
+
         $header = !empty($header) ? array_merge($this->header, $header) : $this->header;
 
         if (!isset($header['Access-Control-Allow-Origin'])) {
