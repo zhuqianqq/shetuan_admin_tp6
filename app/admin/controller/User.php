@@ -95,7 +95,8 @@ class User extends BaseController
      */
     public function editPassWordById(Request $request)
     {
-        $data['user_id'] = $this->request->st_user['user_id'];
+        //it$data['user_id'] = $this->request->st_user['user_id'];
+        $data['user_id'] = 1;
         $data['password'] = input('password', '', 'string');
         if (empty($data['user_id']) || empty($data['password'])) {
             return json_error(10002);

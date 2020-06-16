@@ -195,7 +195,7 @@ class SysClassService
         if (!empty($hasTeacher)) {
             throw new MyException(10018);
         }
-        
+
         BaseModel::beginTrans();
         try {
             if (strpos($sysClassId, ',') !== false) {
