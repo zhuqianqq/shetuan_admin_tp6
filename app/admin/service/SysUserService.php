@@ -168,7 +168,7 @@ class SysUserService
 
         $isSysUserId = SysUser::alias('sy')->where('user_id', $param['sysUserId'])->find();
         if (empty($isSysUserId)) {
-            return json_error(10001, '记录不存在');
+            return json_error(10004);
         }
         /*if($param['nowUserId'] != 1){
             if($param['sysUserId'] == $param['nowUserId']){
@@ -184,6 +184,16 @@ class SysUserService
             return json_error(10001, '登录账号无法修改，请重新提交');
         }*/
 
+        //手机号和账号唯一验证
+        $isExistAccount = SysUser::where('user_id !=:user_id and account=:account', ['user_id' => $isSysUserId, 'account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('user_id !=:user_id and mobile=:mobile', ['user_id' => $isSysUserId, 'mobile' => $param['mobile']])->find();
+        if (!empty($isExistAccount)) {
+            throw new MyException(11110);
+        }
+        if (!empty($isExistMobile)) {
+            throw new MyException(11111);
+        }
+
         BaseModel::beginTrans();
         try {
             $data = [];
@@ -198,10 +208,10 @@ class SysUserService
             SysUser::where('user_id', $param['sysUserId'])->data($data)->update();
     } catch (\Exception $e) {
             BaseModel::rollbackTrans();
-            return json_error(10001, $e->getMessage());
+            throw new MyException(10001, $e->getMessage());
         }
         BaseModel::commitTrans();
-        return json_ok((object)array(), 200);
+        return (object)array();
 
 
     }
@@ -216,8 +226,19 @@ class SysUserService
 
         $isAccount = SysUser::alias('sy')->where('account', $param['account'])->find();
         if ($isAccount && $isAccount['enable'] == 1) {
-            return json_error(11109);
+            throw new MyException(11109);
         }
+
+        //手机号和账号唯一验证
+        $isExistAccount = SysUser::where('account=:account', ['account' => $param['account']])->find();
+        $isExistMobile = SysUser::where('mobile=:mobile', ['mobile' => $param['mobile']])->find();
+        if (!empty($isExistAccount)) {
+            throw new MyException(11110);
+        }
+        if (!empty($isExistMobile)) {
+            throw new MyException(11111);
+        }
+        
         BaseModel::beginTrans();
         try {
             $data = [];
