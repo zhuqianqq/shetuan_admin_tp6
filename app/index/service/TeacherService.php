@@ -126,8 +126,15 @@ class TeacherService
        }
        //end
        $nowTime = date('H:i:s',time()); 
+       // $courseInfo = Course::where('course_id','in',$course_ids_arr)
+       //                ->where('status',1)
+       //                ->where('end_time','>',$nowTime)
+       //                ->select()->order('start_time','asc')->toArray();
+
+       //只返回进行中的课程
        $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->where('status',1)
+                      ->where('start_time','<=',$nowTime)
                       ->where('end_time','>',$nowTime)
                       ->select()->order('start_time','asc')->toArray();
                    
