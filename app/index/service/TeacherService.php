@@ -245,15 +245,20 @@ class TeacherService
                 }else{
 
                       $todayCourses[$k2]['tuanTeacher'] = $tuanTeacher;
-                      $todayCourses[$k2]['rollCall'] = [];
+                      $todayCourses[$k2]['rollCall'] = RollCall::field('course_id,course_name,student_id,student_name,status')
+                                    ->where('course_id',$v2['course_id'])
+                                    ->where('school_id',$user['school_id'])
+                                    ->whereTime('create_time','today')
+                                    ->select();
                       $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                       $todayCourses[$k2]['yidao'] = 0;
                       $todayCourses[$k2]['weidao'] = 0;
-                      $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
-                                                          ->where('class_id','in', $user['class_id'])
-                                                          ->where('school_id',$user['school_id'])
-                                                          ->field('student_id,student_num,student_name')
-                                                          ->select();
+                      $todayCourses[$k2]['studentList'] = [];
+                      // $todayCourses[$k2]['studentList'] = Student::where('course_id',$v2['course_id'])
+                      //                                     ->where('class_id','in', $user['class_id'])
+                      //                                     ->where('school_id',$user['school_id'])
+                      //                                     ->field('student_id,student_num,student_name')
+                      //                                     ->select();
                                                     
                 }
 
