@@ -58,7 +58,7 @@ class TeacherService
        $class_id_arr = explode(',', $class_id);
        $hasTeacher = Teacher::where('class_id','in',$class_id_arr)->count();
        if($hasTeacher){
-            throw new MyException(100,'班级已被认领!');
+            throw new MyException(10077,'班级已被认领!');
        }
 
        return Message::insert([

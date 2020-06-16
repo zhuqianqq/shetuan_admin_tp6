@@ -334,6 +334,7 @@ class StTeacherService
             return RollCall::where('id',$isDianMing['id'])
                    ->update([
                         'status' => $data['state'],
+                        'create_time' => date('Y-m-d H:i:s',time())
                     ]);
 
           }
