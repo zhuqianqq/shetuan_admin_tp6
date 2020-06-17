@@ -125,9 +125,17 @@ class TeacherService
             return [];
        }
        //end
+       $dainmingTime = date('H:i:s',time()-10*60);
        $nowTime = date('H:i:s',time()); 
+       // $courseInfo = Course::where('course_id','in',$course_ids_arr)
+       //                ->where('status',1)
+       //                ->where('end_time','>',$nowTime)
+       //                ->select()->order('start_time','asc')->toArray();
+
+       //只返回进行中的课程
        $courseInfo = Course::where('course_id','in',$course_ids_arr)
                       ->where('status',1)
+                      ->where('start_time','<=',$dainmingTime)
                       ->where('end_time','>',$nowTime)
                       ->select()->order('start_time','asc')->toArray();
                    
@@ -186,7 +194,7 @@ class TeacherService
                     }
                 }
                 $todayCourses[$k2]['yidao'] = $yidao;
-                $todayCourses[$k2]['weidao'] = $todayCourses[$k2]['nums'] - $qingjia - $yidao;
+                $todayCourses[$k2]['weidao'] = abs($todayCourses[$k2]['nums'] - $qingjia - $yidao);
                 
             }
             
