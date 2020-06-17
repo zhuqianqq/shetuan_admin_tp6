@@ -304,6 +304,7 @@ class StTeacherService
      */
     public static function dianMing($user,$data)
     {
+
           $student = Student::alias('s')
                     ->leftJoin('st_shetuan st','s.course_id = st.course_id')
                     ->field('s.*,st.course_name,st.start_time,st.end_time')
@@ -316,6 +317,13 @@ class StTeacherService
                        ->find();
 
           if(!$isDianMing){
+
+            //删除今天的该学生的点名信息
+            RollCall::where('student_id',$data['student_id'])
+                    ->whereTime('create_time','today')
+                    ->delete();
+
+
             //新增操作
             return RollCall::insert([
                         'school_id' => $student['school_id'],
