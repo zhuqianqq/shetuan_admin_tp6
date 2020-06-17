@@ -81,6 +81,7 @@ class StTeacherService
 
         if (empty($data['teacherId'])) {//新增
             $stTeach = new StTeacher();
+            $stTeach->head_image = '';
         } else {
             $stTeach = StTeacher::where('teacher_id=:teacher_id', ['teacher_id' => $data['teacherId']])->find();
             if (empty($stTeach)) {
@@ -93,7 +94,7 @@ class StTeacherService
         if (count($courseArr) != count($courseInfo)) {
             throw new MyException(10004);
         }
-        $stTeach->head_image = '';
+
         $stTeach->teacher_name = $data['teacher_name'];
         $stTeach->mobile = $data['mobile'];
         $stTeach->grade = $data['grade'];
