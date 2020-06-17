@@ -155,6 +155,7 @@ class TeacherService
                 $todayCourses[$k2]['course_state_text'] = '课程未开始';
                 $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
                 $todayCourses[$k2]['yidao'] = 0;
+                $todayCourses[$k2]['qingjia'] = 0;
                 $todayCourses[$k2]['weidao'] = 0;
 
             }else if(time()>$startTime-600 && time()<$startTime){
@@ -162,8 +163,19 @@ class TeacherService
                 $todayCourses[$k2]['course_state'] = 2;
                 $todayCourses[$k2]['course_state_text'] = '课程点名中';
                 $todayCourses[$k2]['nums'] = Student::where('course_id',$v2['course_id'])->count();
-                $todayCourses[$k2]['yidao'] = 0;
-                $todayCourses[$k2]['weidao'] = 0;
+                $yidao = $qingjia = $weidao = 0; //已到人数 请假人数 未到人数
+                foreach ($rollCall as $k3 => $v3) {
+                    if($v3['status'] == 2){
+                        $yidao++;
+                    }
+
+                    if($v3['status'] == 3){
+                        $qingjia++;
+                    }
+                }
+                $todayCourses[$k2]['yidao'] = $yidao;
+                $todayCourses[$k2]['qingjia'] = $qingjia;
+                $todayCourses[$k2]['weidao'] = abs($todayCourses[$k2]['nums'] - $qingjia - $yidao);
 
             }else{
                 //var_dump($todayCourses);die;
@@ -187,6 +199,7 @@ class TeacherService
                     }
                 }
                 $todayCourses[$k2]['yidao'] = $yidao;
+                $todayCourses[$k2]['qingjia'] = $qingjia;
                 $todayCourses[$k2]['weidao'] = abs($todayCourses[$k2]['nums'] - $qingjia - $yidao);
                 
             }
