@@ -45,18 +45,24 @@ class StTeacherService
             ->field('teacher_id teacherId,teacher_name teacherName,mobile,grade,course_id courseId')
             ->paginate($param['page_size'])->toArray();
 
-        $courseInfo = Course::column('course_name','course_id');
+        $courseInfo = Course::where('status=:status', ['status' => Course::STATUS_UP])->column('course_name','course_id');
         foreach ($result['data'] as $k => $v) {
             $courseStr = '';
             if (isset($v['courseId'])) {
                 if (strpos($v['courseId'], ',') !== false) {
                     $courseArr = explode(',', $v['courseId']);
                     foreach ($courseArr as $vv) {
-                        $courseStr .= $courseInfo[$vv] . '、';
+                        if (isset($courseInfo[$vv])) {
+                            $courseStr .= $courseInfo[$vv] . '、';
+                        }
                     }
                     $courseStr = mb_substr($courseStr, 0, -1);
-                } else
-                    $courseStr .= $courseInfo[$v['courseId']];
+                } else {
+                    if (isset($courseInfo[$v['courseId']])) {
+                        $courseStr .= $courseInfo[$v['courseId']];
+                    }
+                }
+
             }
             $result['data'][$k]['course'] = $courseStr;
             $result['data'][$k]['gradeName'] = str_replace(',', '、', $v['grade']) . '年级';
